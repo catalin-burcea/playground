@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1"/>
+    <title>Generate Barcodes</title>
+</head>
+<body>
+    <h3>Generating Barcodes using Barbecue library</h3>
+    <table>
+        <tr>
+            <th>UPCA Barcode</th>
+        </tr>
+        <tr>
+            <td><img th:src="@{'data:image/png;base64,'+${barbecueUPCABarcode}}" /></td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <th>EAN13 Barcode</th>
+        </tr>
+        <tr>
+            <td><img th:src="@{'data:image/png;base64,'+${barbecueEAN13Barcode}}" /></td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <th>Code128 Barcode</th>
+        </tr>
+        <tr>
+            <td><img th:src="@{'data:image/png;base64,'+${barbecueCode128Barcode}}" /></td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <th>PDF417 Barcode</th>
+        </tr>
+        <tr>
+            <td><img th:src="@{'data:image/png;base64,'+${barbecuePDF417Barcode}}" /></td>
+        </tr>
+    </table>
+</body>
+</html>
