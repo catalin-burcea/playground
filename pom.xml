@@ -12,6 +12,7 @@
     <modules>
         <module>barcodes</module>
         <module>kotlin</module>
+        <module>libraries</module>
     </modules>
 
 </project>
