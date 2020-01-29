@@ -13,6 +13,7 @@
         <module>barcodes</module>
         <module>kotlin</module>
         <module>libraries</module>
+        <module>rabbitmq</module>
     </modules>
 
 </project>
