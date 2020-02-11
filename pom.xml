@@ -14,6 +14,7 @@
         <module>kotlin</module>
         <module>libraries</module>
         <module>rabbitmq</module>
+        <module>resilience4j</module>
     </modules>
 
 </project>
