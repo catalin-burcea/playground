@@ -16,3 +16,4 @@ The Memento pattern is useful when you need to provide an undo mechanism in your
 ## References
 * https://www.baeldung.com/java-memento-design-pattern
 * https://dzone.com/articles/design-patterns-memento
+* https://www.tutorialspoint.com/design_pattern/memento_pattern.htm

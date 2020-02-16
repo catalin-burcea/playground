@@ -35,6 +35,7 @@
         <module>interpreter</module>
         <module>command</module>
         <module>memento</module>
+        <module>bridge</module>
     </modules>
 
 </project>
