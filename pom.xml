@@ -17,6 +17,7 @@
         <module>resilience4j</module>
         <module>spring</module>
         <module>spring-resilience4j</module>
+        <module>springdoc-openapi</module>
     </modules>
 
 </project>
