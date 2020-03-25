@@ -10,6 +10,7 @@
         <module>jooq</module>
         <module>lombok</module>
         <module>mapstruct</module>
+        <module>jcache</module>
     </modules>
 
     <parent>
