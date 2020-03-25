@@ -1,4 +1,4 @@
-package com.cburcea.playground.mapstruct;
+package ro.cburcea.playground.mapstruct;
 
 public class Car {
 

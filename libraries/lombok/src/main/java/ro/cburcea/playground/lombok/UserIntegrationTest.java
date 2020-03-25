@@ -1,4 +1,4 @@
-//package com.cburcea.playground.lombok;
+//package ro.cburcea.playground.lombok;
 //
 //import lombok.Getter;
 //import lombok.Setter;

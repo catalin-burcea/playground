@@ -1,4 +1,4 @@
-//package com.cburcea.playground.lombok;
+//package ro.cburcea.playground.lombok;
 //
 //public class LombokDemo {
 //
