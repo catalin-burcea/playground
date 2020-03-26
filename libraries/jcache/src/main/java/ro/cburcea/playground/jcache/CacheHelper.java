@@ -24,6 +24,7 @@ public class CacheHelper {
         config.setTypes(Integer.class, Integer.class);
         config.addCacheEntryListenerConfiguration(listenerConfig);
         config.setExpiryPolicyFactory(AccessedExpiryPolicy.factoryOf(Duration.ONE_MINUTE));
+        config.setStatisticsEnabled(true);
         return config;
     }
 
