@@ -11,6 +11,7 @@
         <module>lombok</module>
         <module>mapstruct</module>
         <module>jcache</module>
+        <module>quartz</module>
     </modules>
 
     <parent>
