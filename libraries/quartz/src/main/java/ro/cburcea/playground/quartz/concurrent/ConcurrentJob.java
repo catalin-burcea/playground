@@ -1,4 +1,4 @@
-package ro.cburcea.playground.quartz;
+package ro.cburcea.playground.quartz.concurrent;
 
 import org.quartz.*;
 
