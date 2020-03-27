@@ -25,6 +25,5 @@ public class HelloQuartzExample {
                 .build();
 
         scheduler.scheduleJob(job, trigger);
-//        scheduler.shutdown();
     }
 }

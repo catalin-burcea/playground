@@ -19,6 +19,7 @@
         <module>spring-resilience4j</module>
         <module>springdoc-openapi</module>
         <module>spring-caching</module>
+        <module>spring-quartz</module>
     </modules>
 
 </project>
