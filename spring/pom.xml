@@ -15,6 +15,7 @@
     <modules>
         <module>profiles</module>
         <module>scheduling</module>
+        <module>filters</module>
     </modules>
 
     <properties>
