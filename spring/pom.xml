@@ -16,6 +16,7 @@
         <module>profiles</module>
         <module>scheduling</module>
         <module>filters</module>
+        <module>spring-boot-custom-starter</module>
     </modules>
 
     <properties>

@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+ro.cburcea.playground.greeter.autoconfigure.GreeterAutoConfiguration
