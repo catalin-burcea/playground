@@ -11,7 +11,9 @@ public class SpringContextTest {
 
     @Test
     public void whenSpringContextIsBootstrapped_thenNoExceptions() {
-    
+        //rewrite - playground - commit1
     }
 
 }
+
+//rewrite - playground - commit2
