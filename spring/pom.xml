@@ -19,6 +19,7 @@
         <module>spring-boot-custom-starter</module>
         <module>logging</module>
         <module>cors</module>
+        <module>embedded-server-configuration</module>
     </modules>
 
     <properties>
