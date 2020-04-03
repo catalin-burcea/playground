@@ -22,6 +22,7 @@
         <module>embedded-server-configuration</module>
         <module>spring-boot-actuator</module>
         <module>spring-boot-runners</module>
+        <module>spring-boot-admin</module>
     </modules>
 
     <properties>
