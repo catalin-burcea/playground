@@ -20,6 +20,7 @@
         <module>springdoc-openapi</module>
         <module>spring-caching</module>
         <module>spring-quartz</module>
+        <module>spring-security</module>
     </modules>
 
 </project>
