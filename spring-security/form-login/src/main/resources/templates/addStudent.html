@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <title>Add Student</title>
+</head>
+<body>
+<div th:fragment="logout" class="logout" sec:authorize="isAuthenticated()">
+    Logged in user: <span sec:authentication="name"></span> |
+    Roles: <span sec:authentication="principal.authorities"></span>
+    <div>
+        <form action="#" th:action="@{/perform_logout}" method="post">
+            <input type="submit" value="Logout"/>
+        </form>
+    </div>
+</div>
+<h1>Add Student</h1>
+<form action="#" th:action="@{/saveStudent}" th:object="${student}"
+      method="post">
+    <ul>
+        <li th:errors="*{id}"/>
+        <li th:errors="*{name}"/>
+        <li th:errors="*{gender}"/>
+        <li th:errors="*{percentage}"/>
+    </ul>
+    <!--<ul>-->
+        <!--<li th:each="err : ${#fields.errors('id')}" th:text="${err}" />-->
+        <!--<li th:each="err : ${#fields.errors('name')}" th:text="${err}" />-->
+    <!--</ul>-->
+    <ul>
+        <li th:each="err : ${#fields.errors('all')}" th:text="${err}" />
+    </ul>
+    <table border="1">
+        <tr>
+            <td><label th:text="#{msg.id}"/></td>
+            <td><input type="number" th:field="*{id}"/></td>
+        </tr>
+        <tr>
+            <td><label th:text="#{msg.name}"/></td>
+            <td><input type="text" th:field="*{name}"/></td>
+        </tr>
+        <tr>
+            <td><label th:text="#{msg.gender}"/></td>
+            <td>
+                <select th:field="*{gender}">
+                    <option th:value="'M'" th:text="Male"></option>
+                    <option th:value="'F'" th:text="Female"></option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td><label th:text="#{msg.percent}"/></td>
+            <td><select id="percentage" name="percentage">
+                <option th:each="i : ${#numbers.sequence(0, 100)}" th:value="${i}" th:text="${i}"
+                        th:selected="${i==75}"></option>
+            </select></td>
+        </tr>
+        <tr>
+            <td><input type="submit" value="Submit"/></td>
+        </tr>
+    </table>
+    <p>
+        <a th:href="@{/listStudents}" th:text="#{msg.ListStudents}"/>
+    </p>
+</form>
+</body>
+</html>
