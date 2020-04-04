@@ -1,4 +1,4 @@
-package ro.cburcea.playground.springsecurity.basicauth;
+package ro.cburcea.playground.springsecurity.digest;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

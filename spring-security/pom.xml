@@ -15,6 +15,7 @@
 
     <modules>
         <module>basic-auth</module>
+        <module>digest-auth</module>
     </modules>
 
 
