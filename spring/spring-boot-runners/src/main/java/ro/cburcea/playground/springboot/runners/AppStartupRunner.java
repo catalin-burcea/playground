@@ -9,10 +9,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class AppStartupRunner implements ApplicationRunner {
 
-    private static Logger LOG = LoggerFactory.getLogger(AppStartupRunner.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AppStartupRunner.class);
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         LOG.info("EXECUTING : ApplicationRunner");
         LOG.info("Your application started with option names : {}", args.getOptionNames());
     }
