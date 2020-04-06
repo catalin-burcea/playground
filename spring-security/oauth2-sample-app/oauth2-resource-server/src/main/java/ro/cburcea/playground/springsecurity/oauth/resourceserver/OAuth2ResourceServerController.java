@@ -17,7 +17,7 @@ public class OAuth2ResourceServerController {
 
 	@GetMapping("/login")
 	public String login() {
-		return "";
+		return "logged in!!!";
 	}
 
 	@GetMapping("/message")

@@ -1,10 +1,12 @@
 package ro.cburcea.playground.springsecurity.oauth.authserver.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -33,9 +35,13 @@ import java.security.KeyPair;
 @Configuration
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
+    private static final String REDIRECT_URI = "http://localhost:8081/login/client-app";
     private AuthenticationManager authenticationManager;
     private KeyPair keyPair;
     private boolean jwtEnabled;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     public AuthorizationServerConfiguration(
             AuthenticationConfiguration authenticationConfiguration,
@@ -53,48 +59,48 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         clients.inMemory()
                 .withClient("reader")
                     .authorizedGrantTypes("password")
-                    .secret("{noop}secret")
+                    .secret(passwordEncoder.encode("secret"))
                     .scopes("message_read")
                     .accessTokenValiditySeconds(600_000_000)
                     .and()
                 .withClient("writer")
                     .authorizedGrantTypes("password")
-                    .secret("{noop}secret")
+                    .secret(passwordEncoder.encode("secret"))
                     .scopes("message_write")
                     .accessTokenValiditySeconds(600_000_000)
                     .and()
                 .withClient("script")
                     .authorizedGrantTypes("client_credentials")
-                    .secret("{noop}secret")
+                    .secret(passwordEncoder.encode("secret"))
                     .scopes("message_read")
                     .accessTokenValiditySeconds(600_000_000)
                     .and()
                 .withClient("web")
                     .authorizedGrantTypes("authorization_code")
-                    .secret("{noop}secret")
+                    .secret(passwordEncoder.encode("secret"))
                     .scopes("message_read", "message_write")
-                    .redirectUris("http://localhost:8080/login")
+                    .redirectUris(REDIRECT_URI)
                     .accessTokenValiditySeconds(1000)
                     .refreshTokenValiditySeconds(600_600_000)
                     .and()
                 .withClient("mobile")
                     .authorizedGrantTypes("implicit")
-                    .secret("{noop}secret")
+                    .secret(passwordEncoder.encode("secret"))
                     .scopes("message_read", "message_write")
-                    .redirectUris("http://localhost:8080/login")
+                    .redirectUris(REDIRECT_URI)
                     .accessTokenValiditySeconds(1000)
                     .and()
                 .withClient("refresh")
                     .authorizedGrantTypes("refresh_token")
-                    .secret("{noop}secret")
+                    .secret(passwordEncoder.encode("secret"))
                     .scopes("message_read", "message_write")
-                    .redirectUris("http://localhost:8080/login")
+                    .redirectUris(REDIRECT_URI)
                     .accessTokenValiditySeconds(1000)
                     .refreshTokenValiditySeconds(100_000)
                     .and()
                 .withClient("noscopes")
                     .authorizedGrantTypes("password")
-                    .secret("{noop}secret")
+                    .secret(passwordEncoder.encode("secret"))
                     .scopes("none")
                     .accessTokenValiditySeconds(600_000_000);
         // @formatter:on
