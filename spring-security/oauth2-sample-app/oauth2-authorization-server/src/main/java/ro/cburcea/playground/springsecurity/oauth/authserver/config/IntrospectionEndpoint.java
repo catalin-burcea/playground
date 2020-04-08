@@ -15,21 +15,22 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Legacy Authorization Server (spring-security-oauth2) does not support any
- * Token Introspection endpoint.
- * <p>
- * This class adds ad-hoc support in order to better support the other samples in the repo.
+ * The token info endpoint, also sometimes called the introspection endpoint, likely requires some kind of client authentication,
+ * either Basic or Bearer. Generally speaking, the bearer token in the SecurityContext won’t suffice since that is tied to the user.
+ * Instead, you’ll need to specify credentials that represent this client.
+ *
+ * By default, this will use Basic authentication, using the configured credentials, to authenticate against the token info endpoint.
  */
 @FrameworkEndpoint
-class IntrospectEndpoint {
+class IntrospectionEndpoint {
 
     private TokenStore tokenStore;
 
-    IntrospectEndpoint(TokenStore tokenStore) {
+    IntrospectionEndpoint(TokenStore tokenStore) {
         this.tokenStore = tokenStore;
     }
 
-    @PostMapping("/introspect")
+    @PostMapping("/introspection")
     @ResponseBody
     public Map<String, Object> introspect(@RequestParam("token") String token) {
         OAuth2AccessToken accessToken = this.tokenStore.readAccessToken(token);

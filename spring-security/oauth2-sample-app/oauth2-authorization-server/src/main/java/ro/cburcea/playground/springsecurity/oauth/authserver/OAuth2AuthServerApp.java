@@ -13,7 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * 			[POST] curl writer:secret@localhost:8080/oauth/token -d grant_type=password -d username=user -d password=password
  * 			[POST] curl noscopes:secret@localhost:8080/oauth/token -d grant_type=password -d username=user -d password=password
  * 		using Postman:
- 			[POST] RequestHeaders: Authorization: Basic c2NyaXB0OnNlY3JldA==
+ *			[POST] RequestHeaders: Authorization: Basic c2NyaXB0OnNlY3JldA==
  * 			RequestBody:
  * 				grant_type: "client_credentials"
  * 				scope: "message_read"
@@ -30,12 +30,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * 				scope: "message_read"
  *
  * 	AUTHORIZATION_CODE grant type
- 		using Postman:
+ *		using Postman:
  * 			[POST] RequestHeaders: Authorization: Basic c2NyaXB0OnNlY3JldA==
  * 			RequestBody:
  * 				grant_type: "authorization_code"
  * 				code: "ZgeZbL"
- * 				redirect_uri: "http://localhost:8081/login/client-app"
+ * 				redirect_uri: "http://localhost:8082/oauth2/redirect"
  * 				client_id: "web"
  *
  */

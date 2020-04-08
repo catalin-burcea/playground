@@ -14,6 +14,11 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @Configuration
 class UserConfig extends WebSecurityConfigurerAdapter {
 
+
+    /**
+     * Spring Security OAuth does not support JWKs, nor does @EnableAuthorizationServer support adding more OAuth 2.0 API endpoints to its initial set.
+     * However, we can add this with only a few lines.
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -23,13 +28,15 @@ class UserConfig extends WebSecurityConfigurerAdapter {
                     .and()
                 .httpBasic()
                     .and()
-                .csrf().ignoringRequestMatchers(request -> "/introspect".equals(request.getRequestURI()))
+                .csrf().ignoringRequestMatchers(request -> "/introspection".equals(request.getRequestURI()))
                     .and()
                 .formLogin();
     }
 
     /**
-     * Note that, as is typical of a Spring Security web application, users are defined in a WebSecurityConfigurerAdapter instance.
+     * End users are specified in a WebSecurityConfigurerAdapter through a UserDetailsService.
+     * So, if you use the OAuth2 Boot defaults (meaning you haven’t implemented a AuthorizationServerConfigurer),
+     * you can expose a UserDetailsService and be done.
      */
     @Bean
     @Override

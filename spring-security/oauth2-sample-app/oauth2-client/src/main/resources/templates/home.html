@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style>
+        .button {
+            background-color: #008CBA; /* Green */
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+<h3>Home Page</h3>
+<p>
+    <a class="button" href="http://localhost:8080/oauth/authorize?grant_type=authorization_code&response_type=code&client_id=web&state=1234">OAuth login</a>
+    <a class="button" th:href="@{/listStudents}">list students</a>
+    <a class="button" th:href="@{/addStudent}">add student</a>
+</p>
+</body>
+</html>

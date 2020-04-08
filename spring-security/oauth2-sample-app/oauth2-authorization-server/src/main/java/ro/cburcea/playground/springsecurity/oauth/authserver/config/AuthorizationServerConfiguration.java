@@ -18,24 +18,32 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 import java.security.KeyPair;
+import java.util.Collections;
+import java.util.Map;
+
+import static ro.cburcea.playground.springsecurity.oauth.authserver.config.JwkSetEndpoint.RSA_KEY_1;
 
 /**
- * An instance of Legacy Authorization Server (spring-security-oauth2) that uses a single,
- * not-rotating key and exposes a JWK endpoint.
- * <p>
- * See
- * <a
- * target="_blank"
- * href="https://docs.spring.io/spring-security-oauth2-boot/docs/current-SNAPSHOT/reference/htmlsingle/">
- * Spring Security OAuth Autoconfig's documentation</a> for additional detail
- *
- * @since 5.1
+ * Up until 2019, the OAuth 2.0 spec only recommended using the PKCE extension for mobile and JavaScript apps.
+ * The latest OAuth Security BCP now recommends using PKCE also for server-side apps,
+ * as it provides some additional benefits there as well.
  */
 @EnableAuthorizationServer
 @Configuration
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
-    private static final String REDIRECT_URI = "http://localhost:8081/login/client-app";
+    private static final String REDIRECT_URI = "http://localhost:8082/oauth2/redirect";
+    private static final String RESOURCE_ID = "RESOURCE_SERVER_ID";
+    private static final String PASSWORD_GRANT_TYPE = "password";
+    private static final String CLIENT_CREDENTIALS_GRANT_TYPE = "client_credentials";
+    private static final String AUTHORIZATION_CODE_GRANT_TYPE = "authorization_code";
+    private static final String IMPLICIT_GRANT_TYPE = "implicit";
+    private static final String REFRESH_TOKEN_GRANT_TYPE = "refresh_token";
+    private static final String MESSAGE_READ_SCOPE = "message_read";
+    private static final String MESSAGE_WRITE_SCOPE = "message_write";
+    private static final String SECRET = "secret";
+    private static final String NONE_SCOPE = "none";
+
     private AuthenticationManager authenticationManager;
     private KeyPair keyPair;
     private boolean jwtEnabled;
@@ -58,50 +66,64 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         // @formatter:off
         clients.inMemory()
                 .withClient("reader")
-                    .authorizedGrantTypes("password")
-                    .secret(passwordEncoder.encode("secret"))
-                    .scopes("message_read")
+                    .authorizedGrantTypes(PASSWORD_GRANT_TYPE)
+                    .secret(passwordEncoder.encode(SECRET))
+                    .scopes(MESSAGE_READ_SCOPE)
+                    .resourceIds(RESOURCE_ID)
                     .accessTokenValiditySeconds(600_000_000)
                     .and()
                 .withClient("writer")
-                    .authorizedGrantTypes("password")
-                    .secret(passwordEncoder.encode("secret"))
-                    .scopes("message_write")
+                    .authorizedGrantTypes(PASSWORD_GRANT_TYPE)
+                    .secret(passwordEncoder.encode(SECRET))
+                    .scopes(MESSAGE_WRITE_SCOPE)
+                    .resourceIds(RESOURCE_ID)
                     .accessTokenValiditySeconds(600_000_000)
                     .and()
                 .withClient("script")
-                    .authorizedGrantTypes("client_credentials")
-                    .secret(passwordEncoder.encode("secret"))
-                    .scopes("message_read")
+                    .authorizedGrantTypes(CLIENT_CREDENTIALS_GRANT_TYPE)
+                    .secret(passwordEncoder.encode(SECRET))
+                    .scopes(MESSAGE_READ_SCOPE)
+//                    .resourceIds(RESOURCE_ID)
                     .accessTokenValiditySeconds(600_000_000)
                     .and()
                 .withClient("web")
-                    .authorizedGrantTypes("authorization_code")
-                    .secret(passwordEncoder.encode("secret"))
-                    .scopes("message_read", "message_write")
+                    .authorizedGrantTypes(AUTHORIZATION_CODE_GRANT_TYPE)
+                    .secret(passwordEncoder.encode(SECRET))
+                    .scopes(MESSAGE_READ_SCOPE, MESSAGE_WRITE_SCOPE)
                     .redirectUris(REDIRECT_URI)
+                    .resourceIds(RESOURCE_ID)
                     .accessTokenValiditySeconds(1000)
                     .refreshTokenValiditySeconds(600_600_000)
                     .and()
                 .withClient("mobile")
-                    .authorizedGrantTypes("implicit")
-                    .secret(passwordEncoder.encode("secret"))
-                    .scopes("message_read", "message_write")
+                    .authorizedGrantTypes(IMPLICIT_GRANT_TYPE)
+                    .secret(passwordEncoder.encode(SECRET))
+                    .scopes(MESSAGE_READ_SCOPE, MESSAGE_WRITE_SCOPE)
                     .redirectUris(REDIRECT_URI)
+                    .resourceIds(RESOURCE_ID)
                     .accessTokenValiditySeconds(1000)
                     .and()
                 .withClient("refresh")
-                    .authorizedGrantTypes("refresh_token")
-                    .secret(passwordEncoder.encode("secret"))
-                    .scopes("message_read", "message_write")
+                    .authorizedGrantTypes(REFRESH_TOKEN_GRANT_TYPE)
+                    .secret(passwordEncoder.encode(SECRET))
+                    .scopes(MESSAGE_READ_SCOPE, MESSAGE_WRITE_SCOPE)
                     .redirectUris(REDIRECT_URI)
+                    .resourceIds(RESOURCE_ID)
                     .accessTokenValiditySeconds(1000)
                     .refreshTokenValiditySeconds(100_000)
                     .and()
                 .withClient("noscopes")
-                    .authorizedGrantTypes("password")
-                    .secret(passwordEncoder.encode("secret"))
-                    .scopes("none")
+                    .authorizedGrantTypes(PASSWORD_GRANT_TYPE)
+                    .secret(passwordEncoder.encode(SECRET))
+                    .scopes(NONE_SCOPE)
+                    .resourceIds(RESOURCE_ID)
+                    .accessTokenValiditySeconds(600_000_000)
+                    .and()
+                .withClient("resource-server")
+                    .authorizedGrantTypes(CLIENT_CREDENTIALS_GRANT_TYPE)
+                    .secret(passwordEncoder.encode(SECRET))
+                    .resourceIds(RESOURCE_ID)
+                    .scopes(NONE_SCOPE)
                     .accessTokenValiditySeconds(600_000_000);
         // @formatter:on
     }
@@ -109,8 +131,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         // @formatter:off
-        endpoints
-                .authenticationManager(this.authenticationManager)
+        endpoints.authenticationManager(this.authenticationManager)
                 .tokenStore(tokenStore());
 
         if (this.jwtEnabled) {
@@ -130,8 +151,8 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     @Bean
     public JwtAccessTokenConverter accessTokenConverter() {
-        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        converter.setKeyPair(this.keyPair);
+        Map<String, String> customHeaders = Collections.singletonMap("kid", RSA_KEY_1);
+        JwtCustomHeadersAccessTokenConverter converter = new JwtCustomHeadersAccessTokenConverter(customHeaders, this.keyPair);
 
         DefaultAccessTokenConverter accessTokenConverter = new DefaultAccessTokenConverter();
         accessTokenConverter.setUserTokenConverter(new SubjectAttributeUserTokenConverter());
