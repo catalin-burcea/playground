@@ -1,4 +1,4 @@
-package ro.cburcea.playground.springsecurity.basicauth;
+package ro.cburcea.playground.springsecurity.filterchain;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -9,13 +9,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 
 @Configuration
+//@EnableWebSecurity(debug = true)
 @EnableWebSecurity
 public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    private MyBasicAuthenticationEntryPoint authenticationEntryPoint;
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -32,14 +31,20 @@ public class CustomWebSecurityConfigurerAdapter extends WebSecurityConfigurerAda
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+    protected void configure(HttpSecurity httpSecurity) throws Exception {
+        // @formatter:off
+        httpSecurity.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/home").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .httpBasic()
-                .authenticationEntryPoint(authenticationEntryPoint);
+                    .antMatchers("/home").permitAll()
+                    .anyRequest().authenticated()
+                    .and()
+                .httpBasic();
+
+        httpSecurity.addFilterBefore(new LoggingRequestFilter(), SecurityContextPersistenceFilter.class);
+
+        //Adds a Filter that must be an instance of or extend one of the Filters provided within the Security framework.
+//        httpSecurity.addFilter(new LoggingRequestFilter());
+        // @formatter:on
     }
 
     @Bean

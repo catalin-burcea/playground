@@ -18,6 +18,7 @@
         <module>digest-auth</module>
         <module>form-login</module>
         <module>oauth2-sample-app</module>
+        <module>security-filter-chain</module>
     </modules>
 
     <build>
