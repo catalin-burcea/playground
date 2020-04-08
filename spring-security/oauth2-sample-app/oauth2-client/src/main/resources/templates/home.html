@@ -21,7 +21,7 @@
 <body>
 <h3>Home Page</h3>
 <p>
-    <a class="button" href="http://localhost:8080/oauth/authorize?grant_type=authorization_code&response_type=code&client_id=web&state=1234">OAuth login</a>
+    <a class="button" href="http://localhost:8080/oauth/authorize?grant_type=authorization_code&response_type=code&client_id=web&state=1234&scope=message_read message_write">OAuth login</a>
     <a class="button" th:href="@{/listStudents}">list students</a>
     <a class="button" th:href="@{/addStudent}">add student</a>
 </p>

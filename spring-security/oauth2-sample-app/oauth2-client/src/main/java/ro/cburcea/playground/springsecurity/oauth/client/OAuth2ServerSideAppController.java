@@ -45,7 +45,10 @@ public class OAuth2ServerSideAppController {
 
 
     @GetMapping("/oauth2/redirect")
-    public String redirect(@RequestParam String code, @RequestParam String state, HttpServletResponse response) throws IOException {
+    public String redirect(@RequestParam(required = false) String code, @RequestParam String state, @RequestParam(required = false) String error, HttpServletResponse response) throws IOException {
+        if(error != null) {
+            return "redirect:/home";
+        }
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
         headers.setBasicAuth(Base64.getEncoder().encodeToString("web:secret".getBytes()));

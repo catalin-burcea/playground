@@ -4,8 +4,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * http://localhost:8080/oauth/authorize
- * http://localhost:8080/oauth/token
+ * OAuth server endpoints:
+ * 		http://localhost:8080/oauth/authorize
+ * 		http://localhost:8080/oauth/token
+ * 		http://localhost:8080/oauth/confirm_access
+ * 		http://localhost:8080/oauth/error
  *
  * PASSWORD_CREDENTIALS grant type
  * 		using CURL:
