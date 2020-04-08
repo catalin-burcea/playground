@@ -19,6 +19,7 @@
         <module>form-login</module>
         <module>oauth2-sample-app</module>
         <module>security-filter-chain</module>
+        <module>security-context</module>
     </modules>
 
     <build>
