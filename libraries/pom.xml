@@ -12,6 +12,7 @@
         <module>mapstruct</module>
         <module>jcache</module>
         <module>quartz</module>
+        <module>hikari</module>
     </modules>
 
     <parent>
