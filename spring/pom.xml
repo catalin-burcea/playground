@@ -25,6 +25,7 @@
         <module>spring-boot-admin</module>
         <module>spring-boot-devtools</module>
         <module>spring-boot-hikari</module>
+        <module>spring-boot-internationalization</module>
     </modules>
 
     <properties>
