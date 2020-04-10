@@ -2,18 +2,20 @@ package ro.cburcea.playground.filters;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import ro.cburcea.playground.filters.config.SimpleBean;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Order(3)
 public class URLSpecificFilter implements Filter {
 
-    private final static Logger LOG = LoggerFactory.getLogger(URLSpecificFilter.class);
+    @Autowired
+    private SimpleBean simpleBean; //null
+
+    private static final Logger LOG = LoggerFactory.getLogger(URLSpecificFilter.class);
 
     @Override
     public void init(final FilterConfig filterConfig) {

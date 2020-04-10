@@ -7,12 +7,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class Controller {
 
     @GetMapping("/filters")
-    public String getSomeString() {
+    public String filters() {
         return "testing filter mechanism";
     }
 
+    @GetMapping("/filters-error")
+    public String filtersError() {
+        throw new RuntimeException();
+    }
+
     @GetMapping("/specific-filter")
-    public String getAnotherString() {
+    public String specificFilter() {
         return "testing url based filter mechanism";
     }
 }

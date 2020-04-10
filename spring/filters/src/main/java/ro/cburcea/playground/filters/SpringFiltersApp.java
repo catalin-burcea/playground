@@ -2,11 +2,13 @@ package ro.cburcea.playground.filters;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 
+@ServletComponentScan
 @SpringBootApplication
-public class SpringApp {
+public class SpringFiltersApp {
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringApp.class, args);
+        SpringApplication.run(SpringFiltersApp.class, args);
     }
 }

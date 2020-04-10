@@ -14,7 +14,7 @@ import java.io.IOException;
 @Order(2)
 public class RequestResponseLoggingFilter implements Filter {
 
-    private final static Logger LOG = LoggerFactory.getLogger(RequestResponseLoggingFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RequestResponseLoggingFilter.class);
 
     @Override
     public void init(final FilterConfig filterConfig) {
