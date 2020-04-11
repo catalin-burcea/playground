@@ -21,6 +21,7 @@
         <module>spring-caching</module>
         <module>spring-quartz</module>
         <module>spring-security</module>
+        <module>netflix</module>
     </modules>
 
 </project>
