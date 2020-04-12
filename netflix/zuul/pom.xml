@@ -15,7 +15,8 @@
 
     <modules>
         <module>zuul-rate-limiting</module>
+        <module>zuul-fallback-gateway-service</module>
+        <module>zuul-fallback-backend-service</module>
     </modules>
-
 
 </project>
