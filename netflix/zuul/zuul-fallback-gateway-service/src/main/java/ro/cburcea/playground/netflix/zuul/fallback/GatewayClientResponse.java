@@ -1,4 +1,4 @@
-package ro.cburcea.playground.netflix.zuulapp;
+package ro.cburcea.playground.netflix.zuul.fallback;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ro.cburcea.playground.netflix.zuul</groupId>
-    <artifactId>zuul-app-gateway-service</artifactId>
+    <artifactId>zuul-filters</artifactId>
 
     <dependencyManagement>
         <dependencies>
@@ -28,6 +28,11 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-zuul</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>2.4.7</version>
         </dependency>
     </dependencies>
 

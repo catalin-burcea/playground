@@ -1,4 +1,4 @@
-package ro.cburcea.playground.netflix.zuulapp;
+package ro.cburcea.playground.netflix.backendservice;
 
 public class Foo {
 

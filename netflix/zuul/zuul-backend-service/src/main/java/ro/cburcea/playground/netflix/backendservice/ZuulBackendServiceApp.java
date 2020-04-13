@@ -1,4 +1,4 @@
-package ro.cburcea.playground.netflix.zuulapp;
+package ro.cburcea.playground.netflix.backendservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-package ro.cburcea.playground.netflix.zuulapp;
+package ro.cburcea.playground.netflix.zuul.fallback;
 
 import com.netflix.hystrix.exception.HystrixTimeoutException;
 import org.springframework.cloud.netflix.zuul.filters.route.FallbackProvider;
@@ -7,15 +7,15 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 
 @Component
-class FooServiceFallback implements FallbackProvider {
- 
-    private static final String DEFAULT_MESSAGE = "Foo information is not available.";
- 
+class GatewayServiceFallback implements FallbackProvider {
+
+    private static final String DEFAULT_MESSAGE = "Service not available.";
+
     @Override
     public String getRoute() {
-        return "foo-service";
+        return "*"; // or return null;
     }
- 
+
     @Override
     public ClientHttpResponse fallbackResponse(String route, Throwable cause) {
         if (cause instanceof HystrixTimeoutException) {
@@ -24,5 +24,5 @@ class FooServiceFallback implements FallbackProvider {
             return new GatewayClientResponse(HttpStatus.INTERNAL_SERVER_ERROR, DEFAULT_MESSAGE);
         }
     }
- 
+
 }

@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ro.cburcea.playground.netflix</groupId>
+    <groupId>ro.cburcea.playground.netflix.zuul</groupId>
     <artifactId>zuul-app-backend-service</artifactId>
 
     <dependencyManagement>
