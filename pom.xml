@@ -12,16 +12,31 @@
     <modules>
         <module>barcodes</module>
         <module>kotlin</module>
-        <module>libraries</module>
+        <module>java-libraries</module>
         <module>rabbitmq</module>
         <module>resilience4j</module>
         <module>spring</module>
-        <module>spring-resilience4j</module>
-        <module>springdoc-openapi</module>
-        <module>spring-caching</module>
-        <module>spring-quartz</module>
         <module>spring-security</module>
-        <module>netflix</module>
+        <module>spring-cloud</module>
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <spring.boot.dependencies.version>2.2.5.RELEASE</spring.boot.dependencies.version>
+        <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
+    </properties>
 
 </project>

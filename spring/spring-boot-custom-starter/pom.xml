@@ -9,6 +9,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
+    <groupId>ro.cburcea.playground.spring</groupId>
     <artifactId>spring-boot-custom-starter</artifactId>
     <packaging>pom</packaging>
 

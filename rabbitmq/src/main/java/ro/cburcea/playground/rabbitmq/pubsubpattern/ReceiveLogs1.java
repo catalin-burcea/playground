@@ -8,6 +8,7 @@ import com.rabbitmq.client.DeliverCallback;
 import java.nio.charset.StandardCharsets;
 
 public class ReceiveLogs1 {
+
     private static final String EXCHANGE_NAME = "logs";
 
     public static void main(String[] argv) throws Exception {

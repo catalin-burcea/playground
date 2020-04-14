@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: api-gateway
+
+zuul:
+  ignoredServices: '*'
+  routes:
+    foo-service:
+      path: /spring-zuul-foos-resource/foos/**
+      service-id: foo-service
+#      In order to configure fallback, specifying url directly in zuul.routes.<service>.url, is NOT executed in HystrixCommand.
+#      url: http://localhost:8081/spring-zuul-foos-resource/foos
+      strip-prefix: false
+
+# Spring Cloud Netflix Zuul uses Netflix’s Ribbon to perform client-side load balancing.
+# By default, Ribbon would use Netflix Eureka for service discovery. For this simple example, you can skip service discovery, so set ribbon.eureka.enabled to false.
+# Since Ribbon now cannot use Eureka to look up services, we must specify a url for the book service.
+# The request will be executed in HystrixCommand via Ribbon.
+ribbon:
+  eureka:
+    enabled: false
+
+foo-service:
+  ribbon:
+    listOfServers: http://localhost:8081/
