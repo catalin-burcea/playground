@@ -18,6 +18,7 @@
         <module>eureka</module>
         <module>zuul</module>
         <module>spring-cloud-circuitbreaker</module>
+        <module>ribbon</module>
     </modules>
 
     <dependencyManagement>

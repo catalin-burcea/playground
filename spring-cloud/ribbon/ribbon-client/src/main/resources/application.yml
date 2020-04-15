@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: demo-client
+
+server:
+  port: 8080
+
+ribbon:
+  eureka:
+    enabled: false
+  eager-load:
+    enabled: true
+    clients: demoserver
+
+demoserver:
+  ribbon:
+    NIWSServerListClassName: com.netflix.loadbalancer.ConfigurationBasedServerList
+    listOfServers: http://localhost:8081, http://localhost:8082
+#    ServerListRefreshInterval: 15000
+
+# Classes defined in these properties have precedence over beans defined by using @RibbonClient(configuration=MyRibbonConfig.class)
+#  and the defaults provided by Spring Cloud Netflix.
+
+# <clientName>.ribbon.NFLoadBalancerClassName: Should implement ILoadBalancer
+# <clientName>.ribbon.NFLoadBalancerRuleClassName: Should implement IRule
+# <clientName>.ribbon.NFLoadBalancerPingClassName: Should implement IPing
+# <clientName>.ribbon.NIWSServerListClassName: Should implement ServerList
+# <clientName>.ribbon.NIWSServerListFilterClassName: Should implement ServerListFilter
+
