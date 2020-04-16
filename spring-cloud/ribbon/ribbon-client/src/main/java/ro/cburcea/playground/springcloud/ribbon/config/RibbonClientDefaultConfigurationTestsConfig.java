@@ -2,15 +2,13 @@ package ro.cburcea.playground.springcloud.ribbon.config;
 
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.*;
-import org.springframework.cloud.netflix.ribbon.RibbonClients;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * A default configuration can be provided for all Ribbon Clients by using the @RibbonClients annotation and registering a default configuration
  */
-@RibbonClients(defaultConfiguration = DefaultRibbonConfig.class)
-public class RibbonClientDefaultConfig {
+//@RibbonClients(defaultConfiguration = DefaultRibbonConfig.class)
+public class RibbonClientDefaultConfigurationTestsConfig {
 
     public static class BazServiceList extends ConfigurationBasedServerList {
 
@@ -22,7 +20,7 @@ public class RibbonClientDefaultConfig {
 
 }
 
-@Configuration
+//@Configuration
 class DefaultRibbonConfig {
 
     @Bean

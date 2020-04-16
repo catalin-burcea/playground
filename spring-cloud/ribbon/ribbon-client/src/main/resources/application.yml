@@ -15,8 +15,8 @@ ribbon:
 demoserver:
   ribbon:
     NIWSServerListClassName: com.netflix.loadbalancer.ConfigurationBasedServerList
-    listOfServers: http://localhost:8081, http://localhost:8082
-#    ServerListRefreshInterval: 15000
+    listOfServers: http://localhost:8083, http://localhost:8081, #http://localhost:8082
+    ServerListRefreshInterval: 10000
 
 # Classes defined in these properties have precedence over beans defined by using @RibbonClient(configuration=MyRibbonConfig.class)
 #  and the defaults provided by Spring Cloud Netflix.
