@@ -19,6 +19,7 @@
         <module>zuul</module>
         <module>spring-cloud-circuitbreaker</module>
         <module>ribbon</module>
+        <module>archaius</module>
     </modules>
 
     <dependencyManagement>
