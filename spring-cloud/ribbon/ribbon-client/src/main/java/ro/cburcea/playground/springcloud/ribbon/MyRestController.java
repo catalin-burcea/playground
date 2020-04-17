@@ -13,9 +13,15 @@ public class MyRestController {
 
     private String clientName = "demoserver";
 
-    @RequestMapping("/client/frontend")
-    public String hi() {
-        String randomString = this.restTemplate.getForObject("http://" + clientName + "/backend", String.class);
-        return "Server Response :: " + randomString;
+    @RequestMapping("/client/success")
+    public String success() {
+        String result = this.restTemplate.getForObject("http://" + clientName + "/backend", String.class);
+        return "Server Response :: " + result;
+    }
+
+    @RequestMapping("/client/timeout")
+    public String retry() {
+        String result = this.restTemplate.getForObject("http://" + clientName + "/timeout", String.class);
+        return "Server Response :: " + result;
     }
 }

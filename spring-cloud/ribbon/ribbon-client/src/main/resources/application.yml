@@ -11,12 +11,23 @@ ribbon:
   eager-load:
     enabled: true
     clients: demoserver
+    # Read timeout/Connect timeout used by Apache HttpClient
+    # It seems that they are not supported by RestTemplate in Spring Cloud Netflix.
+    # Github comment: "One thing that surprised us was that the ribbon setting for connection timeouts are NOT applied when using the rest template."
+    #ReadTimeout: 1000
+    #ConnectTimeout: 1000
 
 demoserver:
   ribbon:
-    NIWSServerListClassName: com.netflix.loadbalancer.ConfigurationBasedServerList
-    listOfServers: http://localhost:8083, http://localhost:8081, #http://localhost:8082
+    #NIWSServerListClassName: com.netflix.loadbalancer.ConfigurationBasedServerList
+    listOfServers: http://localhost:8081, http://localhost:8082
     ServerListRefreshInterval: 10000
+    MaxAutoRetries: 2
+    MaxAutoRetriesNextServer: 1
+    #You can also control whether just GET requests will be retried or whether all requests will be retried.
+    OkToRetryOnAllOperations: true
+    retryableStatusCodes: 500, 501, 502, 503, 504, 408
+
 
 # Classes defined in these properties have precedence over beans defined by using @RibbonClient(configuration=MyRibbonConfig.class)
 #  and the defaults provided by Spring Cloud Netflix.
