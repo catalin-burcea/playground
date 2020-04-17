@@ -31,6 +31,7 @@
         <module>spring-quartz</module>
         <module>springdoc-openapi</module>
         <module>spring-resilience4j</module>
+        <module>spring-retry</module>
     </modules>
 
     <dependencyManagement>
