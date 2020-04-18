@@ -21,6 +21,7 @@
         <module>ribbon</module>
         <module>archaius</module>
         <module>hyxtrix</module>
+        <module>feign</module>
     </modules>
 
     <dependencyManagement>
