@@ -15,6 +15,7 @@
 
     <modules>
         <module>basic-feign</module>
+        <module>advanced-feign</module>
     </modules>
 
 </project>
