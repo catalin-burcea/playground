@@ -2,9 +2,12 @@ package ro.cburcea.playground.springcloud.ribbon.config;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.client.loadbalancer.LoadBalancedRetryFactory;
 import org.springframework.cloud.netflix.ribbon.RibbonClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.backoff.BackOffPolicy;
+import org.springframework.retry.backoff.ExponentialBackOffPolicy;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
@@ -20,6 +23,16 @@ public class RibbonClientConfiguration {
         restTemplateBuilder.setReadTimeout(Duration.ofSeconds(1));
         restTemplateBuilder.setConnectTimeout(Duration.ofSeconds(1));
         return restTemplateBuilder.build();
+    }
+
+    @Bean
+    LoadBalancedRetryFactory retryFactory() {
+        return new LoadBalancedRetryFactory() {
+            @Override
+            public BackOffPolicy createBackOffPolicy(String service) {
+                return new ExponentialBackOffPolicy();
+            }
+        };
     }
 
 }

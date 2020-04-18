@@ -11,11 +11,11 @@ ribbon:
   eager-load:
     enabled: true
     clients: demoserver
-    # Read timeout/Connect timeout used by Apache HttpClient
-    # It seems that they are not supported by RestTemplate in Spring Cloud Netflix.
-    # Github comment: "One thing that surprised us was that the ribbon setting for connection timeouts are NOT applied when using the rest template."
-    #ReadTimeout: 1000
-    #ConnectTimeout: 1000
+  # Read timeout/Connect timeout used by Apache HttpClient
+  # It seems that they are not supported by RestTemplate in Spring Cloud Netflix.
+  # Github comment: "One thing that surprised us was that the ribbon setting for connection timeouts are NOT applied when using the rest template."
+  #ReadTimeout: 1000
+  #ConnectTimeout: 1000
 
 demoserver:
   ribbon:

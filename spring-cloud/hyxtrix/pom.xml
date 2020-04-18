@@ -11,12 +11,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ro.cburcea.playground.springcloud</groupId>
-    <artifactId>ribbon</artifactId>
+    <artifactId>hyxtrix</artifactId>
     <packaging>pom</packaging>
 
     <modules>
-        <module>ribbon-client</module>
-        <module>ribbon-server</module>
+        <module>hystrix-retry</module>
     </modules>
 
 </project>

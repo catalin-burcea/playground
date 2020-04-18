@@ -20,6 +20,7 @@
         <module>spring-cloud-circuitbreaker</module>
         <module>ribbon</module>
         <module>archaius</module>
+        <module>hyxtrix</module>
     </modules>
 
     <dependencyManagement>

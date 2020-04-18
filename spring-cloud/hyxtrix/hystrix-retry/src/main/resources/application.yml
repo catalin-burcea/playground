@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: hystrix-client
+
+server:
+  port: 8080
+
+ribbon:
+  eureka:
+    enabled: false
+  eager-load:
+    enabled: true
+    clients: demoserver
+
+demoserver:
+  ribbon:
+    listOfServers: http://localhost:8081, http://localhost:8082
+    MaxAutoRetries: 2
+    MaxAutoRetriesNextServer: 1
+    retryableStatusCodes: 500, 501, 502, 503, 504, 408
+
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 10
