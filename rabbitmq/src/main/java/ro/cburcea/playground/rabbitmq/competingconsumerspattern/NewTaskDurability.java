@@ -6,7 +6,7 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.MessageProperties;
 
 public class NewTaskDurability {
-    private final static String TASK_QUEUE_NAME = "task_queue";
+    private static final String TASK_QUEUE_NAME = "task_queue";
 
     public static void main(String[] argv) throws Exception {
         ConnectionFactory factory = new ConnectionFactory();

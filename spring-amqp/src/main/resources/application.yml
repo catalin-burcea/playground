@@ -1,0 +1,20 @@
+spring:
+  rabbitmq:
+    dynamic: true
+    listener:
+      simple:
+#        default-requeue-rejected=false - rejected messages are not requeued; they are discarded
+        default-requeue-rejected: false
+#        retry:
+#          enabled: true
+#          initial-interval: 1000
+#          multiplier: 1
+#          max-interval: 10000
+#          max-attempts: 3
+#          stateless: true
+  main:
+    allow-bean-definition-overriding: true
+
+amqp:
+  configuration:
+    current: simple-dlq
