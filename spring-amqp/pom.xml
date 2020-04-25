@@ -17,6 +17,7 @@
         <module>competing-consumers</module>
         <module>publish-subscribe</module>
         <module>rpc</module>
+        <module>publisher-confirms</module>
     </modules>
 
     <dependencyManagement>
