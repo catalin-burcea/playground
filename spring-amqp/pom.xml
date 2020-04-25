@@ -15,6 +15,7 @@
 
     <modules>
         <module>competing-consumers</module>
+        <module>publish-subscribe</module>
     </modules>
 
     <dependencyManagement>
