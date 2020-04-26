@@ -1,10 +1,7 @@
 package ro.cburcea.playground.spring.amqp.retry;
 
 import org.aopalliance.aop.Advice;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -18,8 +15,6 @@ import static ro.cburcea.playground.spring.amqp.retry.RetryApp.GLOBAL_ERROR_HAND
 
 @Configuration
 public class RetryConfiguration {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(RetryConfiguration.class);
 
     @Bean
     public SimpleRabbitListenerContainerFactory retryContainerFactory(ConnectionFactory connectionFactory,
@@ -55,12 +50,5 @@ public class RetryConfiguration {
     @Bean
     public Queue queue() {
         return new Queue(GLOBAL_ERROR_HANDLER_QUEUE, false, false, true);
-    }
-
-    @RabbitListener(queues = GLOBAL_ERROR_HANDLER_QUEUE, containerFactory = "retryContainerFactory")
-    public void consumeBlocking(String payload) throws Exception {
-        LOGGER.info("Processing message from blocking-queue: {}", payload);
-
-        throw new Exception("exception occurred!");
     }
 }
