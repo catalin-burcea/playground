@@ -1,0 +1,13 @@
+# default-requeue-rejected=false - rejected messages are not requeued; they are discarded or sent to a dead letter queue(if configured)
+spring:
+  rabbitmq:
+    listener:
+      simple:
+        default-requeue-rejected: false
+#        retry:
+#          enabled: true
+#          initial-interval: 1000
+#          multiplier: 1
+#          max-interval: 10000
+#          max-attempts: 3
+#          stateless: true
