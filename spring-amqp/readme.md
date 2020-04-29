@@ -62,8 +62,6 @@ We need to note that the transaction mechanism and confirm mechanism are mutuall
 ## References:
 https://www.rabbitmq.com/tutorials/amqp-concepts.html
 https://www.rabbitmq.com/queues.html
-https://www.rabbitmq.com/man/rabbitmqctl.8.html
-https://www.rabbitmq.com/management-cli.html
 https://www.rabbitmq.com/tutorials/tutorial-two-spring-amqp.html
 https://www.rabbitmq.com/tutorials/tutorial-three-spring-amqp.html
 https://www.rabbitmq.com/tutorials/tutorial-four-spring-amqp.html
@@ -76,5 +74,21 @@ https://www.baeldung.com/rabbitmq-spring-amqp
 https://www.baeldung.com/spring-remoting-amqp
 https://www.baeldung.com/spring-amqp-error-handling
 https://www.baeldung.com/spring-amqp-exponential-backoff
-
-
+https://www.rabbitmq.com/man/rabbitmqctl.8.html
+https://www.rabbitmq.com/management-cli.html
+https://www.rabbitmq.com/confirms.html
+https://www.rabbitmq.com/consumer-cancel.html
+https://www.rabbitmq.com/consumer-prefetch.html
+https://www.rabbitmq.com/dlx.html
+https://www.rabbitmq.com/ttl.html
+https://www.rabbitmq.com/maxlength.html
+https://www.rabbitmq.com/priority.html
+https://www.rabbitmq.com/consumer-priority.html
+https://www.rabbitmq.com/nack.html
+https://www.rabbitmq.com/direct-reply-to.html
+https://www.rabbitmq.com/connection-blocked.html
+https://www.rabbitmq.com/e2e.html
+https://www.rabbitmq.com/ae.html
+https://www.rabbitmq.com/sender-selected.html
+https://www.rabbitmq.com/validated-user-id.html
+https://www.rabbitmq.com/auth-notification.html

@@ -20,6 +20,7 @@
         <module>publisher-confirms</module>
         <module>deadletter</module>
         <module>error-handling</module>
+        <module>extensions</module>
     </modules>
 
     <dependencyManagement>

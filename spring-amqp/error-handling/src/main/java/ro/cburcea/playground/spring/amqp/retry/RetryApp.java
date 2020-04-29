@@ -30,7 +30,13 @@ public class RetryApp {
         this.template.convertAndSend(GLOBAL_ERROR_HANDLER_QUEUE, new Foo("bar"));
     }
 
-    @RabbitListener(queues = GLOBAL_ERROR_HANDLER_QUEUE, containerFactory = "retryContainerFactory")
+    /**
+     * While our backoff strategy works, our consumer is blocked until the retries have been exhausted.
+     * A trivial improvement is to make our consumer execute concurrently by setting the concurrency attribute of @RabbitListener
+     *
+     * However, a retried message still blocks a consumer instance. Therefore, the application can suffer from latency issues.
+     */
+    @RabbitListener(queues = GLOBAL_ERROR_HANDLER_QUEUE, containerFactory = "retryContainerFactory", concurrency = "3")
     public void consumeBlocking(String payload) throws Exception {
         LOGGER.info("Processing message from blocking-queue: {}", payload);
 
