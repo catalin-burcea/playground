@@ -23,13 +23,17 @@ class UserConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                    .mvcMatchers("/.well-known/jwks.json").permitAll()
-                    .anyRequest().authenticated()
-                    .and()
+                .mvcMatchers("/.well-known/jwks.json").permitAll()
+                .anyRequest().authenticated()
+                .and()
                 .httpBasic()
-                    .and()
+                .and()
+                .logout()
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .and()
                 .csrf().ignoringRequestMatchers(request -> "/introspection".equals(request.getRequestURI()))
-                    .and()
+                .and()
                 .formLogin();
     }
 
@@ -41,12 +45,19 @@ class UserConfig extends WebSecurityConfigurerAdapter {
     @Bean
     @Override
     public UserDetailsService userDetailsService() {
+        // @formatter:off
         return new InMemoryUserDetailsManager(
-                User
-                        .withUsername("user")
-                        .password(passwordEncoder().encode("password"))
-                        .roles("USER")
-                        .build());
+            User
+                .withUsername("user")
+                .password(passwordEncoder().encode("password"))
+                .roles("USER")
+                .build(),
+            User
+                .withUsername("user2")
+                .password(passwordEncoder().encode("password"))
+                .roles("USER")
+                .build());
+        // @formatter:onn
     }
 
     @Bean

@@ -11,7 +11,7 @@ import org.springframework.security.oauth2.config.annotation.configurers.ClientD
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
-import org.springframework.security.oauth2.provider.token.DefaultAccessTokenConverter;
+import org.springframework.security.oauth2.provider.approval.InMemoryApprovalStore;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
@@ -87,9 +87,11 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
                     .accessTokenValiditySeconds(600_000_000)
                     .and()
                 .withClient("web")
-                    .authorizedGrantTypes(AUTHORIZATION_CODE_GRANT_TYPE)
+                    .authorizedGrantTypes(AUTHORIZATION_CODE_GRANT_TYPE, REFRESH_TOKEN_GRANT_TYPE)
                     .secret(passwordEncoder.encode(SECRET))
                     .scopes(MESSAGE_READ_SCOPE, MESSAGE_WRITE_SCOPE)
+                    .autoApprove(true)
+                    .autoApprove(MESSAGE_READ_SCOPE, MESSAGE_WRITE_SCOPE)
                     .redirectUris(REDIRECT_URI)
                     .resourceIds(RESOURCE_ID)
                     .accessTokenValiditySeconds(1000)
@@ -132,18 +134,17 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         // @formatter:off
         endpoints.authenticationManager(this.authenticationManager)
-                .tokenStore(tokenStore());
-
-        if (this.jwtEnabled) {
-            endpoints.accessTokenConverter(accessTokenConverter());
-        }
+                .tokenStore(tokenStore())
+                .accessTokenConverter(accessTokenConverter());
         // @formatter:on
     }
 
     @Bean
     public TokenStore tokenStore() {
         if (this.jwtEnabled) {
-            return new JwtTokenStore(accessTokenConverter());
+            final JwtTokenStore jwtTokenStore = new JwtTokenStore(accessTokenConverter());
+            jwtTokenStore.setApprovalStore(new InMemoryApprovalStore());
+            return jwtTokenStore;
         } else {
             return new InMemoryTokenStore();
         }
@@ -154,10 +155,19 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         Map<String, String> customHeaders = Collections.singletonMap("kid", RSA_KEY_1);
         JwtCustomHeadersAccessTokenConverter converter = new JwtCustomHeadersAccessTokenConverter(customHeaders, this.keyPair);
 
-        DefaultAccessTokenConverter accessTokenConverter = new DefaultAccessTokenConverter();
-        accessTokenConverter.setUserTokenConverter(new SubjectAttributeUserTokenConverter());
-        converter.setAccessTokenConverter(accessTokenConverter);
+//        DefaultAccessTokenConverter accessTokenConverter = new DefaultAccessTokenConverter();
+//        accessTokenConverter.setUserTokenConverter(new SubjectAttributeUserTokenConverter());
+//        converter.setAccessTokenConverter(accessTokenConverter);
 
         return converter;
     }
+
+//    // Token services. Needed for JWT
+//    @Bean
+//    @Primary
+//    public DefaultTokenServices tokenServices() {
+//        DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+//        defaultTokenServices.setTokenStore(tokenStore());
+//        return defaultTokenServices;
+//    }
 }

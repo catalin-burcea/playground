@@ -1,7 +1,6 @@
 package ro.cburcea.playground.springsecurity.oauth.client;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,13 +31,27 @@ public class OAuth2ServerSideAppController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth2ServerSideAppController.class);
 
-    private static final String ACCESS_TOKEN_COOKIE = "access_token";
+    private static final String ACCESS_TOKEN_COOKIE = "access_token_cookie";
+    private static final String REFRESH_TOKEN_COOKIE = "refresh_token_cookie";
+    private static final String ACCESS_TOKEN = "access_token";
+    private static final String REFRESH_TOKEN = "refresh_token";
+    private static final String BASIC_AUTH_CLIENT_CREDENTIALS = Base64.getEncoder().encodeToString("web:secret".getBytes());
     private RestTemplate restTemplate = new RestTemplate();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * When a user logs out, their token is not immediately removed from the token store, instead it remains valid until it expires on its own.
+     * And so, revocation of a token will mean removing that token from the token store.
+     */
     @PostMapping("logout")
-    public String logout(HttpServletResponse response) {
-        setAccessTokenCookie(response, null);
+    public String logout(@CookieValue(ACCESS_TOKEN_COOKIE) String accessToken, HttpServletResponse response) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBasicAuth(BASIC_AUTH_CLIENT_CREDENTIALS);
+        HttpEntity<?> request = new HttpEntity<>(headers);
+
+        restTemplate.exchange(OAUTH2_TOKEN_URL + "?accessToken=" + accessToken, HttpMethod.DELETE, request, Boolean.class);
+        setTokenCookie(response, null, "/", ACCESS_TOKEN_COOKIE);
+        setTokenCookie(response, null, "/", REFRESH_TOKEN_COOKIE);
 
         return "redirect:/home";
     }
@@ -46,12 +59,12 @@ public class OAuth2ServerSideAppController {
 
     @GetMapping("/oauth2/redirect")
     public String redirect(@RequestParam(required = false) String code, @RequestParam String state, @RequestParam(required = false) String error, HttpServletResponse response) throws IOException {
-        if(error != null) {
+        if (error != null) {
             return "redirect:/home";
         }
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.setBasicAuth(Base64.getEncoder().encodeToString("web:secret".getBytes()));
+        headers.setBasicAuth(BASIC_AUTH_CLIENT_CREDENTIALS);
 
         MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
         map.add("grant_type", "authorization_code");
@@ -63,8 +76,10 @@ public class OAuth2ServerSideAppController {
         ResponseEntity<String> accessTokeResponse = restTemplate.postForEntity(OAUTH2_TOKEN_URL, request, String.class);
         JsonNode accessTokenData = objectMapper.readTree(accessTokeResponse.getBody());
 
-        final String accessToken = accessTokenData.get(ACCESS_TOKEN_COOKIE).textValue();
-        setAccessTokenCookie(response, accessToken);
+        final String accessToken = accessTokenData.get(ACCESS_TOKEN).textValue();
+        final String refreshToken = accessTokenData.get(REFRESH_TOKEN).textValue();
+        setTokenCookie(response, accessToken, "/", ACCESS_TOKEN_COOKIE);
+        setTokenCookie(response, refreshToken, "/", REFRESH_TOKEN_COOKIE);
 
         return "redirect:/home";
     }
@@ -73,7 +88,7 @@ public class OAuth2ServerSideAppController {
     public String saveStudent(@Valid @ModelAttribute Student student,
                               BindingResult errors,
                               Model model,
-                              @CookieValue(ACCESS_TOKEN_COOKIE) String token) {
+                              @CookieValue(value = ACCESS_TOKEN_COOKIE, required = false) String token) {
         LOGGER.info("access_token: {}", token);
         if (!errors.hasErrors()) {
             HttpHeaders headers = new HttpHeaders();
@@ -92,21 +107,21 @@ public class OAuth2ServerSideAppController {
     }
 
     @GetMapping("/addStudent")
-    public String addStudent(Model model, @CookieValue(ACCESS_TOKEN_COOKIE) String token) {
+    public String addStudent(Model model, @CookieValue(value = ACCESS_TOKEN_COOKIE, required = false) String token) {
         model.addAttribute("student", new Student());
 
         try {
             setUserDetails(model, token);
-        } catch (JWTDecodeException ex) {
+        } catch (Exception ex) {
             return "redirect:/accessdenied";
         }
 
         return "addStudent.html";
     }
 
-    private void setUserDetails(Model model, @CookieValue(ACCESS_TOKEN_COOKIE) String token) {
+    private void setUserDetails(Model model, String token) {
         DecodedJWT jwt = JWT.decode(token);
-        String username = jwt.getClaim("sub").asString();
+        String username = jwt.getClaim("user_name").asString();
         List<String> scopes = jwt.getClaim("scope").asList(String.class);
         model.addAttribute("username", username);
         model.addAttribute("scopes", scopes);
@@ -116,7 +131,7 @@ public class OAuth2ServerSideAppController {
     }
 
     @GetMapping("/listStudents")
-    public String listStudent(Model model, @CookieValue(ACCESS_TOKEN_COOKIE) String token) {
+    public String listStudent(Model model, @CookieValue(value = ACCESS_TOKEN_COOKIE, required = false) String token) {
         LOGGER.info("access_token: {}", token);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -136,9 +151,9 @@ public class OAuth2ServerSideAppController {
         return "listStudents.html";
     }
 
-    private void setAccessTokenCookie(HttpServletResponse response, String value) {
-        Cookie cookie = new Cookie(ACCESS_TOKEN_COOKIE, value);
-        cookie.setPath("/");
+    private void setTokenCookie(HttpServletResponse response, String token, String path, String name) {
+        Cookie cookie = new Cookie(name, token);
+        cookie.setPath(path);
         response.addCookie(cookie);
     }
 
