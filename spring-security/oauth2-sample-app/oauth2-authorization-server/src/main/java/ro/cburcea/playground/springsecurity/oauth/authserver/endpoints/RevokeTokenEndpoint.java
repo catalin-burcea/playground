@@ -1,7 +1,6 @@
-package ro.cburcea.playground.springsecurity.oauth.authserver.config;
+package ro.cburcea.playground.springsecurity.oauth.authserver.endpoints;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.endpoint.FrameworkEndpoint;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @FrameworkEndpoint
-@DependsOn("authorizationServerConfiguration")
 public class RevokeTokenEndpoint {
 
     @Autowired

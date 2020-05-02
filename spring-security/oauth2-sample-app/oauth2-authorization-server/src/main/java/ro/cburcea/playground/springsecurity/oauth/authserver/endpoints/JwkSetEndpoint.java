@@ -1,4 +1,4 @@
-package ro.cburcea.playground.springsecurity.oauth.authserver.config;
+package ro.cburcea.playground.springsecurity.oauth.authserver.endpoints;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.KeyUse;

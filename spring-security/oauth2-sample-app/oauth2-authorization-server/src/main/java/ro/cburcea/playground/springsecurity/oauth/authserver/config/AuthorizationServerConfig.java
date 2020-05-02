@@ -21,7 +21,7 @@ import java.security.KeyPair;
 import java.util.Collections;
 import java.util.Map;
 
-import static ro.cburcea.playground.springsecurity.oauth.authserver.config.JwkSetEndpoint.RSA_KEY_1;
+import static ro.cburcea.playground.springsecurity.oauth.authserver.endpoints.JwkSetEndpoint.RSA_KEY_1;
 
 /**
  * Up until 2019, the OAuth 2.0 spec only recommended using the PKCE extension for mobile and JavaScript apps.
@@ -30,7 +30,7 @@ import static ro.cburcea.playground.springsecurity.oauth.authserver.config.JwkSe
  */
 @EnableAuthorizationServer
 @Configuration
-public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
+public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
     private static final String REDIRECT_URI = "http://localhost:8082/oauth2/redirect";
     private static final String RESOURCE_ID = "RESOURCE_SERVER_ID";
@@ -51,7 +51,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    public AuthorizationServerConfiguration(
+    public AuthorizationServerConfig(
             AuthenticationConfiguration authenticationConfiguration,
             KeyPair keyPair,
             @Value("${security.oauth2.authorizationserver.jwt.enabled:true}") boolean jwtEnabled) throws Exception {

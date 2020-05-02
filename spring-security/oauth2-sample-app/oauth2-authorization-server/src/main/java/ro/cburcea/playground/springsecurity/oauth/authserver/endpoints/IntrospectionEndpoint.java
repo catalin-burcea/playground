@@ -1,4 +1,4 @@
-package ro.cburcea.playground.springsecurity.oauth.authserver.config;
+package ro.cburcea.playground.springsecurity.oauth.authserver.endpoints;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * The token info endpoint, also sometimes called the introspection endpoint, likely requires some kind of client authentication,
@@ -44,7 +43,7 @@ class IntrospectionEndpoint {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         attributes.put("active", true);
         attributes.put("exp", accessToken.getExpiration().getTime());
-        attributes.put("scope", accessToken.getScope().stream().collect(Collectors.joining(" ")));
+        attributes.put("scope", String.join(" ", accessToken.getScope()));
         attributes.put("sub", authentication.getName());
         attributes.put("username", user.getUsername());
 

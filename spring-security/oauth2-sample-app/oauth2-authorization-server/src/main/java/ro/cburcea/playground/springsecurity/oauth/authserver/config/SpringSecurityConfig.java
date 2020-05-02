@@ -12,7 +12,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 
 @Configuration
-class UserConfig extends WebSecurityConfigurerAdapter {
+class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     /**
@@ -21,20 +21,22 @@ class UserConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // @formatter:off
         http
-                .authorizeRequests()
+            .authorizeRequests()
                 .mvcMatchers("/.well-known/jwks.json").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .httpBasic()
+            .httpBasic()
                 .and()
-                .logout()
+            .csrf().ignoringRequestMatchers(request -> "/introspection".equals(request.getRequestURI()))
+                .and()
+            .formLogin()
+                .and()
+            .logout()
                 .invalidateHttpSession(true)
-                .clearAuthentication(true)
-                .and()
-                .csrf().ignoringRequestMatchers(request -> "/introspection".equals(request.getRequestURI()))
-                .and()
-                .formLogin();
+                .clearAuthentication(true);
+        // @formatter:on
     }
 
     /**
