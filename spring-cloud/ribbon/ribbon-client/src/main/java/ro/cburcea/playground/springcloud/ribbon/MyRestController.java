@@ -11,17 +11,17 @@ public class MyRestController {
     @Autowired
     private RestTemplate restTemplate;
 
-    private String clientName = "demoserver";
+    private static final String WEATHER_SERVICE = "weather-service";
 
     @RequestMapping("/client/success")
     public String success() {
-        String result = this.restTemplate.getForObject("http://" + clientName + "/backend", String.class);
+        String result = this.restTemplate.getForObject("http://" + WEATHER_SERVICE + "/backend", String.class);
         return "Server Response :: " + result;
     }
 
-    @RequestMapping("/client/timeout")
-    public String retry() {
-        String result = this.restTemplate.getForObject("http://" + clientName + "/timeout", String.class);
-        return "Server Response :: " + result;
+    @RequestMapping("/client/weather")
+    public String weather() {
+        String result = this.restTemplate.getForObject("http://" + WEATHER_SERVICE + "/weather", String.class);
+        return "Weather Service Response: " + result;
     }
 }
