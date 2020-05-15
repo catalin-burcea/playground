@@ -19,6 +19,7 @@
         <module>spring-security</module>
         <module>spring-cloud</module>
         <module>docker</module>
+        <module>design-patterns</module>
     </modules>
 
     <build>
