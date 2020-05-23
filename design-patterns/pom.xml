@@ -21,6 +21,7 @@
         <module>adapter</module>
         <module>facade</module>
         <module>proxy</module>
+        <module>decorator</module>
     </modules>
 
 </project>
