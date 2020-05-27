@@ -1,6 +1,6 @@
 spring:
   profiles:
-    # fixed-backoff, exponential-backoff
+    # fixed-backoff, exponential-backoff, exponential-random-backoff
     active: fixed-backoff
   application:
     name: demo-client
