@@ -24,6 +24,7 @@
         <module>decorator</module>
         <module>observer</module>
         <module>chain-of-responsibility</module>
+        <module>state</module>
     </modules>
 
 </project>
