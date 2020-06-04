@@ -11,6 +11,7 @@ The COR pattern can be implemented in two ways:
 **Examples**
 
 * In the Java world, we benefit from Chain of Responsibility every day. One such classic example is Servlet Filters in Java that allow multiple filters to process an HTTP request. 
+* Exception handling
 
 **Benefits**
 

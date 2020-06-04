@@ -8,7 +8,7 @@ GoF: "Defines a one-to-many dependency between objects so that when one object c
 
 * A news agency can notify channels when it receives news. Receiving news is what changes the state of the news agency, and it causes the channels to be notified.
 * Newspaper: Whenever a new edition is published by the publisher, it will be circulated among subscribers whom have subscribed to publisher.
-
+* In Java: Throwing and handling events.
 
 ## References
 
