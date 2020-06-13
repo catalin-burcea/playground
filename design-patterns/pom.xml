@@ -30,6 +30,7 @@
         <module>composite</module>
         <module>null-object</module>
         <module>template</module>
+        <module>strategy</module>
     </modules>
 
 </project>
