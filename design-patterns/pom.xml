@@ -32,6 +32,7 @@
         <module>template</module>
         <module>strategy</module>
         <module>visitor</module>
+        <module>interpreter</module>
     </modules>
 
 </project>
