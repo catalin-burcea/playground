@@ -36,6 +36,7 @@
         <module>command</module>
         <module>memento</module>
         <module>bridge</module>
+        <module>spring-statemachine</module>
     </modules>
 
 </project>
