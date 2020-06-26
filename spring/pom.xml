@@ -32,6 +32,7 @@
         <module>springdoc-openapi</module>
         <module>spring-resilience4j</module>
         <module>spring-retry</module>
+        <module>spring-data-redis</module>
     </modules>
 
     <dependencyManagement>
