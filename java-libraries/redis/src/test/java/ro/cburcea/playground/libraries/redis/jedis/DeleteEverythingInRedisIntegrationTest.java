@@ -1,4 +1,4 @@
-package ro.cburcea.playground.redis.jedis;
+package ro.cburcea.playground.libraries.redis.jedis;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
