@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,16 @@ public class StreamsFeatures {
                 .collect(Collectors.joining(", "));
 
         assertEquals(resultString, "JAVA, KOTLIN");
+    }
+
+    @Test
+    void testOptionalStreams() {
+        final List<Optional<String>> optionals = Arrays.asList(Optional.of("test1"), Optional.empty(), Optional.of("test2"));
+        List<String> filteredList = optionals.stream()
+                .flatMap(Optional::stream)
+                .collect(Collectors.toList());
+
+        assertEquals(Arrays.asList("test1", "test2"),filteredList);
     }
 
 }
