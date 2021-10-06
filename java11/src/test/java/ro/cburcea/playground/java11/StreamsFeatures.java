@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -41,6 +42,16 @@ public class StreamsFeatures {
                 .collect(Collectors.toList());
 
         assertEquals(Arrays.asList("test1", "test2"),filteredList);
+    }
+
+    @Test
+    void whenListContainsInteger_OrElseThrowReturnsInteger() {
+        Integer firstEven = Stream.of(1,2,3,4)
+                .filter(i -> i % 2 == 0)
+                .findFirst()
+                .orElseThrow();
+
+        assertEquals(Integer.valueOf(2), firstEven);
     }
 
 }
