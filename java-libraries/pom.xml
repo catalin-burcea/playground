@@ -10,10 +10,8 @@
         <module>jooq</module>
         <module>lombok</module>
         <module>mapstruct</module>
-        <module>jcache</module>
         <module>quartz</module>
         <module>hikari</module>
-        <module>redis</module>
     </modules>
 
     <parent>

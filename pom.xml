@@ -21,6 +21,7 @@
 <!--        <module>docker</module>-->
         <module>design-patterns</module>
         <module>java11</module>
+        <module>caching</module>
     </modules>
 
     <build>
