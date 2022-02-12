@@ -15,6 +15,8 @@
     <modules>
         <module>jcache</module>
         <module>redis</module>
+        <module>ignite/ignite-client-node</module>
+        <module>ignite/ignite-server-node</module>
     </modules>
 
 </project>
