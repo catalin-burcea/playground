@@ -3,10 +3,9 @@ package ro.cburcea.playground.caching.ignite;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
+import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.cluster.ClusterState;
-import org.apache.ignite.configuration.DataRegionConfiguration;
-import org.apache.ignite.configuration.DataStorageConfiguration;
-import org.apache.ignite.configuration.IgniteConfiguration;
+import org.apache.ignite.configuration.*;
 import org.apache.ignite.logger.slf4j.Slf4jLogger;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
@@ -35,6 +34,7 @@ public class IgniteConfig {
         igniteConfiguration.setClientMode(false);
         igniteConfiguration.setLifecycleBeans(new IgniteLifecycleBean());
         igniteConfiguration.setGridLogger(new Slf4jLogger());
+        igniteConfiguration.setIgniteInstanceName("my-ignite-server-node");
 
         TcpDiscoverySpi spi = new TcpDiscoverySpi();
 
@@ -44,14 +44,41 @@ public class IgniteConfig {
         spi.setIpFinder(ipFinder);
 
         igniteConfiguration.setDiscoverySpi(spi);
+        igniteConfiguration.setDataStorageConfiguration(dataStorageConfiguration());
+        igniteConfiguration.setCacheConfiguration(myCache());
+
         return igniteConfiguration;
     }
 
     private DataStorageConfiguration dataStorageConfiguration() {
-        DataStorageConfiguration dataStorageConfiguration = new DataStorageConfiguration();
-        DataRegionConfiguration dataRegionConfiguration = new DataRegionConfiguration();
-        dataRegionConfiguration.setPersistenceEnabled(true);
-        return dataStorageConfiguration;
+        DataStorageConfiguration storageCfg = new DataStorageConfiguration();
+
+        DataRegionConfiguration defaultRegion = new DataRegionConfiguration();
+        defaultRegion.setName("Default_Region");
+        defaultRegion.setInitialSize(10 * 1024 * 1024);
+        defaultRegion.setMaxSize(100 * 1024 * 1024);
+
+        storageCfg.setDefaultDataRegionConfiguration(defaultRegion);
+
+        // 40MB memory region with eviction enabled.
+        DataRegionConfiguration regionWithEviction = new DataRegionConfiguration();
+        regionWithEviction.setName("40MB_Region_Eviction");
+        regionWithEviction.setInitialSize(20 * 1024 * 1024);
+        regionWithEviction.setMaxSize(40 * 1024 * 1024);
+        regionWithEviction.setPageEvictionMode(DataPageEvictionMode.RANDOM_2_LRU);
+
+        storageCfg.setDataRegionConfigurations(regionWithEviction);
+
+//        dataRegionConfiguration.setPersistenceEnabled(true);
+        return storageCfg;
+    }
+
+    private CacheConfiguration myCache() {
+        CacheConfiguration<Integer, Integer> myCache = new CacheConfiguration<>("myCache");
+        myCache.setCacheMode(CacheMode.PARTITIONED);
+        myCache.setBackups(2);
+
+        return myCache;
     }
 
 }
