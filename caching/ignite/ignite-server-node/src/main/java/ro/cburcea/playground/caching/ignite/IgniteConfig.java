@@ -53,6 +53,10 @@ public class IgniteConfig {
     private DataStorageConfiguration dataStorageConfiguration() {
         DataStorageConfiguration storageCfg = new DataStorageConfiguration();
 
+        storageCfg.setWalMode(WALMode.FSYNC);
+        storageCfg.setWalSegmentSize(128 * 1024 * 1024);
+
+
         DataRegionConfiguration defaultRegion = new DataRegionConfiguration();
         defaultRegion.setName("Default_Region");
         defaultRegion.setInitialSize(10 * 1024 * 1024);
@@ -60,16 +64,15 @@ public class IgniteConfig {
 
         storageCfg.setDefaultDataRegionConfiguration(defaultRegion);
 
-        // 40MB memory region with eviction enabled.
-        DataRegionConfiguration regionWithEviction = new DataRegionConfiguration();
-        regionWithEviction.setName("40MB_Region_Eviction");
-        regionWithEviction.setInitialSize(20 * 1024 * 1024);
-        regionWithEviction.setMaxSize(40 * 1024 * 1024);
-        regionWithEviction.setPageEvictionMode(DataPageEvictionMode.RANDOM_2_LRU);
+        DataRegionConfiguration region2 = new DataRegionConfiguration();
+        region2.setName("region2");
+        region2.setInitialSize(20 * 1024 * 1024);
+        region2.setMaxSize(40 * 1024 * 1024);
+        region2.setPageEvictionMode(DataPageEvictionMode.RANDOM_2_LRU);
+        region2.setPersistenceEnabled(true);
 
-        storageCfg.setDataRegionConfigurations(regionWithEviction);
+        storageCfg.setDataRegionConfigurations(region2);
 
-//        dataRegionConfiguration.setPersistenceEnabled(true);
         return storageCfg;
     }
 
@@ -77,6 +80,7 @@ public class IgniteConfig {
         CacheConfiguration<Integer, Integer> myCache = new CacheConfiguration<>("myCache");
         myCache.setCacheMode(CacheMode.PARTITIONED);
         myCache.setBackups(2);
+        myCache.setDataRegionName("region2");
 
         return myCache;
     }
