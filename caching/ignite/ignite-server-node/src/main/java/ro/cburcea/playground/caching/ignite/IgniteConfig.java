@@ -8,6 +8,7 @@ import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.cache.CacheRebalanceMode;
 import org.apache.ignite.cache.CacheWriteSynchronizationMode;
 import org.apache.ignite.cache.eviction.lru.LruEvictionPolicy;
+import org.apache.ignite.cache.eviction.lru.LruEvictionPolicyFactory;
 import org.apache.ignite.cluster.ClusterState;
 import org.apache.ignite.configuration.*;
 import org.apache.ignite.logger.slf4j.Slf4jLogger;
@@ -54,7 +55,9 @@ public class IgniteConfig {
         setTcpDiscoverySpi(igniteConfiguration);
         igniteConfiguration.setDataStorageConfiguration(dataStorageConfiguration());
         igniteConfiguration.setCacheConfiguration(myCache());
+        igniteConfiguration.setCacheConfiguration(myLocalNearCache());
         igniteConfiguration.setCacheConfiguration(myOnHeapCache());
+        igniteConfiguration.setCacheConfiguration(myNearCache());
 
         return igniteConfiguration;
     }
@@ -110,23 +113,49 @@ public class IgniteConfig {
         return myCache;
     }
 
-    private CacheConfiguration myOnHeapCache() {
-        CacheConfiguration<Integer, Integer> myCache = new CacheConfiguration<>("myOnHeapCache");
+    private CacheConfiguration myLocalNearCache() {
+        CacheConfiguration<Integer, Integer> myCache = new CacheConfiguration<>("myLocalNearCache");
 
         myCache.setDataRegionName(NATIVE_PERSISTENCE_REGION);
-        myCache.setRebalanceMode(CacheRebalanceMode.ASYNC);
-        myCache.setWriteSynchronizationMode(CacheWriteSynchronizationMode.PRIMARY_SYNC);
-
-        myCache.setAtomicityMode(CacheAtomicityMode.ATOMIC);
-        myCache.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(Duration.FIVE_MINUTES));
-        myCache.setEagerTtl(true);
-        //The on-heap eviction policies remove the cache entries from Java heap only.
-        //The entries stored in the off-heap region of the memory are not affected.
-        myCache.setOnheapCacheEnabled(true);
-        // Set the maximum cache size to 1 million (default is 100,000).
-        myCache.setEvictionPolicyFactory(() -> new LruEvictionPolicy<>(1000000));
 
         return myCache;
+    }
+
+    private CacheConfiguration myOnHeapCache() {
+        CacheConfiguration<Integer, Integer> myOnHeapCache = new CacheConfiguration<>("myOnHeapCache");
+
+        myOnHeapCache.setDataRegionName(NATIVE_PERSISTENCE_REGION);
+        myOnHeapCache.setRebalanceMode(CacheRebalanceMode.ASYNC);
+        myOnHeapCache.setWriteSynchronizationMode(CacheWriteSynchronizationMode.PRIMARY_SYNC);
+
+        myOnHeapCache.setAtomicityMode(CacheAtomicityMode.ATOMIC);
+        myOnHeapCache.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(Duration.FIVE_MINUTES));
+        myOnHeapCache.setEagerTtl(true);
+        //The on-heap eviction policies remove the cache entries from Java heap only.
+        //The entries stored in the off-heap region of the memory are not affected.
+        myOnHeapCache.setOnheapCacheEnabled(true);
+        // Set the maximum cache size to 1 million (default is 100,000).
+        myOnHeapCache.setEvictionPolicyFactory(() -> new LruEvictionPolicy<>(1_000_000));
+
+        return myOnHeapCache;
+    }
+
+    private CacheConfiguration myNearCache() {
+        NearCacheConfiguration<Integer, Integer> nearCfg = new NearCacheConfiguration<>();
+
+        // Use LRU eviction policy to automatically evict entries
+        // from near-cache whenever it reaches 100_000 entries
+        // The parameters below are not inherited from the underlying cache configuration.
+        nearCfg.setNearEvictionPolicyFactory(new LruEvictionPolicyFactory<>(100_000));
+        nearCfg.setNearStartSize(10_000);
+
+        CacheConfiguration<Integer, Integer> myNearCache = new CacheConfiguration<>("myNearCache");
+        myNearCache.setDataRegionName(NATIVE_PERSISTENCE_REGION);
+        myNearCache.setNearConfiguration(nearCfg);
+
+        //Once configured in this way, the near cache is created on any node that requests data from the underlying cache,
+        //including both server nodes and client nodes. Near caches are created on server nodes and thick client nodes, but not on thin clients.
+        return myNearCache;
     }
 
 }

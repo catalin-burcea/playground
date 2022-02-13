@@ -30,6 +30,12 @@ public class IgniteConfig {
         igniteConfiguration.setLifecycleBeans(new IgniteLifecycleBean());
         igniteConfiguration.setGridLogger(new Slf4jLogger());
 
+        setTcpDiscoverySpi(igniteConfiguration);
+
+        return igniteConfiguration;
+    }
+
+    private void setTcpDiscoverySpi(IgniteConfiguration igniteConfiguration) {
         TcpDiscoverySpi spi = new TcpDiscoverySpi();
 
         TcpDiscoveryVmIpFinder ipFinder = new TcpDiscoveryVmIpFinder();
@@ -38,8 +44,6 @@ public class IgniteConfig {
         spi.setIpFinder(ipFinder);
 
         igniteConfiguration.setDiscoverySpi(spi);
-
-        return igniteConfiguration;
     }
 
 }

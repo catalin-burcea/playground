@@ -19,12 +19,22 @@ public class CacheLoad {
 
     @PostConstruct
     public void load() {
-        IgniteCache<Integer, Integer> cache = ignite.getOrCreateCache("myCache");
+        IgniteCache<Integer, Integer> myCache = ignite.getOrCreateCache("myCache");
+        IgniteCache<Integer, Integer> myNearCache = ignite.getOrCreateCache("myNearCache");
 
         final int key = new Random().nextInt();
         final int val = new Random().nextInt();
-        cache.put(key, val);
-        log.info("result from cache: key={},val= {}", key, val);
+        myCache.put(key, val);
+        myNearCache.put(key, val);
+
+//        NearCacheConfiguration<Integer, String> nearCfg = new NearCacheConfiguration<>();
+//        nearCfg.setNearEvictionPolicyFactory(new LruEvictionPolicyFactory<>(100_000));
+//        IgniteCache<Integer, String> myLocalNearCache = ignite.getOrCreateNearCache("myLocalNearCache", nearCfg);
+//        myLocalNearCache.put(key, "2");
+
+        log.info("result from myCache: key={}, val={}", key, myCache.get(key));
+        log.info("result from myNearCache: key={}, val={}", key, myNearCache.get(key));
+//        log.info("result from myLocalNearCache: key={}, val={}", key, myLocalNearCache.get(key));
     }
 }
 
