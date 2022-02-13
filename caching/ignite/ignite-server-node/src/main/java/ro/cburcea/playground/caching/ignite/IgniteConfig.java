@@ -7,6 +7,7 @@ import org.apache.ignite.cache.CacheAtomicityMode;
 import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.cache.CacheRebalanceMode;
 import org.apache.ignite.cache.CacheWriteSynchronizationMode;
+import org.apache.ignite.cache.eviction.lru.LruEvictionPolicy;
 import org.apache.ignite.cluster.ClusterState;
 import org.apache.ignite.configuration.*;
 import org.apache.ignite.logger.slf4j.Slf4jLogger;
@@ -53,6 +54,7 @@ public class IgniteConfig {
         setTcpDiscoverySpi(igniteConfiguration);
         igniteConfiguration.setDataStorageConfiguration(dataStorageConfiguration());
         igniteConfiguration.setCacheConfiguration(myCache());
+        igniteConfiguration.setCacheConfiguration(myOnHeapCache());
 
         return igniteConfiguration;
     }
@@ -104,6 +106,25 @@ public class IgniteConfig {
         myCache.setAtomicityMode(CacheAtomicityMode.ATOMIC);
         myCache.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(Duration.FIVE_MINUTES));
         myCache.setEagerTtl(true);
+
+        return myCache;
+    }
+
+    private CacheConfiguration myOnHeapCache() {
+        CacheConfiguration<Integer, Integer> myCache = new CacheConfiguration<>("myOnHeapCache");
+
+        myCache.setDataRegionName(NATIVE_PERSISTENCE_REGION);
+        myCache.setRebalanceMode(CacheRebalanceMode.ASYNC);
+        myCache.setWriteSynchronizationMode(CacheWriteSynchronizationMode.PRIMARY_SYNC);
+
+        myCache.setAtomicityMode(CacheAtomicityMode.ATOMIC);
+        myCache.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(Duration.FIVE_MINUTES));
+        myCache.setEagerTtl(true);
+        //The on-heap eviction policies remove the cache entries from Java heap only.
+        //The entries stored in the off-heap region of the memory are not affected.
+        myCache.setOnheapCacheEnabled(true);
+        // Set the maximum cache size to 1 million (default is 100,000).
+        myCache.setEvictionPolicyFactory(() -> new LruEvictionPolicy<>(1000000));
 
         return myCache;
     }
