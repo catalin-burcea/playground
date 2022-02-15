@@ -1,7 +1,8 @@
-package ro.cburcea.playground.spring.rest;
+package ro.cburcea.playground.spring.rest.service;
 
 
 import org.springframework.stereotype.Service;
+import ro.cburcea.playground.spring.rest.domain.User;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -16,9 +17,11 @@ public class UserService {
 
     @PostConstruct
     public void init() {
-        users.add(new User(1, "firstName1", "lastName1", 22, Arrays.asList("Football", "Tennis")));
-        users.add(new User(2, "firstName2", "lastName2", 43, Arrays.asList("Football", "Basketball")));
-        users.add(new User(3, "firstName3", "lastName3", 35, Arrays.asList("Football", "Hiking")));
+
+        for (int i = 1; i < 50_000; i++) {
+            users.add(new User(i, "firstName" + i, "lastName" + i, i, Arrays.asList("Football", "Tennis")));
+        }
+
     }
 
     public List<User> findAllUsers() {

@@ -1,4 +1,4 @@
-package ro.cburcea.playground.spring.rest;
+package ro.cburcea.playground.spring.rest.controller;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -8,7 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ro.cburcea.playground.spring.rest.UserUtils;
+import ro.cburcea.playground.spring.rest.domain.User;
 import ro.cburcea.playground.spring.rest.dtos.UserV2Dto;
+import ro.cburcea.playground.spring.rest.mapper.UserMapper;
+import ro.cburcea.playground.spring.rest.service.UserService;
 
 import java.net.URI;
 import java.util.List;
@@ -27,15 +31,15 @@ public class UserV2Controller {
     // built-in support for HEAD and OPTIONS for GET methods
     @GetMapping(value = "/users", produces = API_V2)
     public ResponseEntity<List<UserV2Dto>> getUsersV2() {
-        return ResponseEntity.ok(UserMapper.INSTANCE.mapToUsersV2(userService.findAllUsers()));
+        final List<User> users = userService.findAllUsers();
+        return ResponseEntity.ok(UserMapper.INSTANCE.mapToUsersV2(users));
     }
 
 
     @GetMapping(value = "/users/{id}", produces = API_V2)
     public ResponseEntity<UserV2Dto> getUserV2(@PathVariable int id) {
-        Optional<User> user = userService.findUserById(id);
-        return user
-                .map(u -> ResponseEntity.ok(UserMapper.INSTANCE.mapToUserV2Dto(u)))
+        return userService.findUserById(id)
+                .map(user -> ResponseEntity.ok(UserMapper.INSTANCE.mapToUserV2Dto(user)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -61,18 +65,19 @@ public class UserV2Controller {
 
     @PutMapping(value = "/users/{id}", consumes = API_V2)
     public ResponseEntity<Void> updateUser(@RequestBody UserV2Dto userV2Dto, @PathVariable int id) {
-        Optional<User> user = userService.findUserById(id);
+        Optional<User> optionalUser = userService.findUserById(id);
 
-        if (user.isEmpty()) {
+        if (optionalUser.isEmpty()) {
             userService.findAllUsers().add(UserMapper.INSTANCE.mapToUser(userV2Dto));
             return ResponseEntity
                     .created(URI.create("/users/" + userV2Dto.getId()))
                     .build();
         }
-        user.get().setFirstName(userV2Dto.getName().split(" ")[0]);
-        user.get().setLastName(userV2Dto.getName().split(" ")[1]);
-        user.get().setAge(userV2Dto.getAge());
-        user.get().setSports(userV2Dto.getSports());
+        final User user = optionalUser.get();
+        user.setFirstName(userV2Dto.getName().split(" ")[0]);
+        user.setLastName(userV2Dto.getName().split(" ")[1]);
+        user.setAge(userV2Dto.getAge());
+        user.setSports(userV2Dto.getSports());
         return ResponseEntity.noContent().build();
     }
 

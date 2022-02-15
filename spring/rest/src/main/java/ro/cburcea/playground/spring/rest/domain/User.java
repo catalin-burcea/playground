@@ -1,4 +1,4 @@
-package ro.cburcea.playground.spring.rest;
+package ro.cburcea.playground.spring.rest.domain;
 
 import java.util.List;
 

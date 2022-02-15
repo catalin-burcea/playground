@@ -1,9 +1,10 @@
-package ro.cburcea.playground.spring.rest;
+package ro.cburcea.playground.spring.rest.mapper;
 
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
+import ro.cburcea.playground.spring.rest.domain.User;
 import ro.cburcea.playground.spring.rest.dtos.UserDto;
 import ro.cburcea.playground.spring.rest.dtos.UserV2Dto;
 

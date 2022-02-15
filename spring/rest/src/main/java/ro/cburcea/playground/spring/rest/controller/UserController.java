@@ -1,19 +1,25 @@
-package ro.cburcea.playground.spring.rest;
+package ro.cburcea.playground.spring.rest.controller;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import ro.cburcea.playground.spring.rest.UserUtils;
+import ro.cburcea.playground.spring.rest.domain.User;
 import ro.cburcea.playground.spring.rest.dtos.UserDto;
+import ro.cburcea.playground.spring.rest.mapper.UserMapper;
+import ro.cburcea.playground.spring.rest.service.UserService;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 public class UserController {
@@ -27,15 +33,20 @@ public class UserController {
     // built-in support for HEAD and OPTIONS for GET methods
     @GetMapping(value = "/users", produces = API_V1)
     public ResponseEntity<List<UserDto>> getUsers() {
-        return ResponseEntity.ok(UserMapper.INSTANCE.mapToUsers(userService.findAllUsers()));
+        final CacheControl cacheControl = CacheControl
+                .maxAge(30, TimeUnit.SECONDS);
+        final List<User> users = userService.findAllUsers();
+        return ResponseEntity
+                .ok()
+                .cacheControl(cacheControl)
+                .body(UserMapper.INSTANCE.mapToUsers(users));
     }
 
 
     @GetMapping(value = "/users/{id}", produces = API_V1)
     public ResponseEntity<UserDto> getUser(@PathVariable int id) {
-        Optional<User> user = userService.findUserById(id);
-        return user
-                .map(u -> ResponseEntity.ok(UserMapper.INSTANCE.mapToUserDto(u)))
+        return userService.findUserById(id)
+                .map(user -> ResponseEntity.ok(UserMapper.INSTANCE.mapToUserDto(user)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -82,18 +93,19 @@ public class UserController {
      */
     @PutMapping(value = "/users/{id}", consumes = API_V1)
     public ResponseEntity<Void> updateUser(@RequestBody UserDto userDto, @PathVariable int id) {
-        Optional<User> user = userService.findUserById(id);
+        Optional<User> optionalUser = userService.findUserById(id);
 
-        if (user.isEmpty()) {
+        if (optionalUser.isEmpty()) {
             userService.findAllUsers().add(UserMapper.INSTANCE.mapToUser(userDto));
             return ResponseEntity
                     .created(URI.create("/users/" + userDto.getId()))
                     .build();
         }
-        user.get().setFirstName(userDto.getFirstName());
-        user.get().setLastName(userDto.getLastName());
-        user.get().setAge(userDto.getAge());
-        user.get().setSports(userDto.getSports());
+        final User user = optionalUser.get();
+        user.setFirstName(userDto.getFirstName());
+        user.setLastName(userDto.getLastName());
+        user.setAge(userDto.getAge());
+        user.setSports(userDto.getSports());
         return ResponseEntity.noContent().build();
     }
 
@@ -105,23 +117,24 @@ public class UserController {
      */
     @PatchMapping(value = "/users/{id}", consumes = API_V1)
     public ResponseEntity<Void> patchUserMethod1(@RequestBody UserDto patchedUser, @PathVariable int id) {
-        Optional<User> user = userService.findUserById(id);
+        Optional<User> optionalUser = userService.findUserById(id);
 
-        if (user.isEmpty()) {
+        if (optionalUser.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
+        final User user = optionalUser.get();
         if (StringUtils.hasLength(patchedUser.getFirstName())) {
-            user.get().setFirstName(patchedUser.getFirstName());
+            user.setFirstName(patchedUser.getFirstName());
         }
         if (StringUtils.hasLength(patchedUser.getLastName())) {
-            user.get().setLastName(patchedUser.getLastName());
+            user.setLastName(patchedUser.getLastName());
         }
         if (patchedUser.getAge() > 0) {
-            user.get().setAge(patchedUser.getAge());
+            user.setAge(patchedUser.getAge());
         }
         if (patchedUser.getSports() != null) {
-            user.get().setSports(patchedUser.getSports());
+            user.setSports(patchedUser.getSports());
         }
         return ResponseEntity.noContent().build();
     }
@@ -129,37 +142,37 @@ public class UserController {
     /**
      * PATCH method
      * Content-Type = application/json-patchv1+json
-     [
-     {
-         "op":"test",
-         "path":"/age",
-         "value": 77
-     },
-     {
-         "op":"replace",
-         "path":"/age",
-         "value":77
-     },
-     {
-         "op":"add",
-         "path":"/sports/0",
-         "value":"Handball"
-     },
-     {
-         "op":"remove",
-         "path":"/sports/1"
-     },
-     {
-         "op":"move",
-         "from":"/sports/0",
-         "path":"/sports/-"
-     },
-         {
-         "op":"copy",
-         "from":"/sports/0",
-         "path":"/sports/-"
-         }
-     ]
+     * [
+     * {
+     * "op":"test",
+     * "path":"/age",
+     * "value": 77
+     * },
+     * {
+     * "op":"replace",
+     * "path":"/age",
+     * "value":77
+     * },
+     * {
+     * "op":"add",
+     * "path":"/sports/0",
+     * "value":"Handball"
+     * },
+     * {
+     * "op":"remove",
+     * "path":"/sports/1"
+     * },
+     * {
+     * "op":"move",
+     * "from":"/sports/0",
+     * "path":"/sports/-"
+     * },
+     * {
+     * "op":"copy",
+     * "from":"/sports/0",
+     * "path":"/sports/-"
+     * }
+     * ]
      */
 
     // do we need to version PATCH?!
