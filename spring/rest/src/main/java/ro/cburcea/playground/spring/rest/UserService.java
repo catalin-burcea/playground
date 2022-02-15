@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -20,11 +21,15 @@ public class UserService {
         users.add(new User(3, "firstName3", "lastName3", 35, Arrays.asList("Football", "Hiking")));
     }
 
-    public List<User> getUsers() {
+    public List<User> findAllUsers() {
         return users;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public Optional<User> findUserById(int id) {
+        return users
+                .stream()
+                .filter(u -> id == u.getId())
+                .findFirst();
     }
+
 }

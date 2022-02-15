@@ -27,20 +27,18 @@ public class UserController {
     // built-in support for HEAD and OPTIONS for GET methods
     @GetMapping(value = "/users", produces = API_V1)
     public ResponseEntity<List<UserDto>> getUsers() {
-        return ResponseEntity.ok(UserMapper.INSTANCE.mapToUsers(userService.getUsers()));
+        return ResponseEntity.ok(UserMapper.INSTANCE.mapToUsers(userService.findAllUsers()));
     }
 
 
     @GetMapping(value = "/users/{id}", produces = API_V1)
     public ResponseEntity<UserDto> getUser(@PathVariable int id) {
-        Optional<User> user = userService.getUsers()
-                .stream()
-                .filter(u -> id == u.getId())
-                .findFirst();
+        Optional<User> user = userService.findUserById(id);
         return user
                 .map(u -> ResponseEntity.ok(UserMapper.INSTANCE.mapToUserDto(u)))
                 .orElse(ResponseEntity.notFound().build());
     }
+
 
     /**
      * POST request creates a resource. The server assigns a URI for the new resource, and returns that URI to the client.
@@ -49,16 +47,13 @@ public class UserController {
      */
     @PostMapping(value = "/users", consumes = API_V1)
     public ResponseEntity<Void> addUser(@RequestBody UserDto newUser) {
-        Optional<User> user = userService.getUsers()
-                .stream()
-                .filter(u -> newUser.getId() == u.getId())
-                .findFirst();
+        Optional<User> user = userService.findUserById(newUser.getId());
 
         if (user.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        userService.getUsers().add(UserMapper.INSTANCE.mapToUser(newUser));
+        userService.findAllUsers().add(UserMapper.INSTANCE.mapToUser(newUser));
         return ResponseEntity
                 .created(URI.create("/users/" + newUser.getId()))
                 .build();
@@ -66,16 +61,13 @@ public class UserController {
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable int id) {
-        Optional<User> user = userService.getUsers()
-                .stream()
-                .filter(u -> id == u.getId())
-                .findFirst();
+        Optional<User> user = userService.findUserById(id);
 
         if (user.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        userService.getUsers().remove(user.get());
+        userService.findAllUsers().remove(user.get());
         return ResponseEntity.noContent().build();
     }
 
@@ -90,13 +82,10 @@ public class UserController {
      */
     @PutMapping(value = "/users/{id}", consumes = API_V1)
     public ResponseEntity<Void> updateUser(@RequestBody UserDto userDto, @PathVariable int id) {
-        Optional<User> user = userService.getUsers()
-                .stream()
-                .filter(u -> id == u.getId())
-                .findFirst();
+        Optional<User> user = userService.findUserById(id);
 
         if (user.isEmpty()) {
-            userService.getUsers().add(UserMapper.INSTANCE.mapToUser(userDto));
+            userService.findAllUsers().add(UserMapper.INSTANCE.mapToUser(userDto));
             return ResponseEntity
                     .created(URI.create("/users/" + userDto.getId()))
                     .build();
@@ -116,10 +105,7 @@ public class UserController {
      */
     @PatchMapping(value = "/users/{id}", consumes = API_V1)
     public ResponseEntity<Void> patchUserMethod1(@RequestBody UserDto patchedUser, @PathVariable int id) {
-        Optional<User> user = userService.getUsers()
-                .stream()
-                .filter(u -> id == u.getId())
-                .findFirst();
+        Optional<User> user = userService.findUserById(id);
 
         if (user.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -155,11 +141,6 @@ public class UserController {
          "value":77
      },
      {
-         "op":"replace",
-         "path":"/name",
-         "value":"Fooo Baaar"
-     },
-     {
          "op":"add",
          "path":"/sports/0",
          "value":"Handball"
@@ -184,10 +165,7 @@ public class UserController {
     // do we need to version PATCH?!
     @PatchMapping(value = "/users/{id}", consumes = {APPLICATION_JSON_PATCH_V1_JSON})
     public ResponseEntity<Void> patchUserMethod2(@RequestBody JsonPatch patch, @PathVariable int id) {
-        Optional<User> user = userService.getUsers()
-                .stream()
-                .filter(u -> id == u.getId())
-                .findFirst();
+        Optional<User> user = userService.findUserById(id);
 
         if (user.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -195,7 +173,7 @@ public class UserController {
 
         try {
             UserDto userDtoPatched = UserUtils.applyPatchToUser(patch, UserMapper.INSTANCE.mapToUserDto(user.get()));
-            userService.getUsers().set(userService.getUsers().indexOf(user.get()), UserMapper.INSTANCE.mapToUser(userDtoPatched));
+            userService.findAllUsers().set(userService.findAllUsers().indexOf(user.get()), UserMapper.INSTANCE.mapToUser(userDtoPatched));
         } catch (JsonPatchException | JsonProcessingException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

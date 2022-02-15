@@ -24,20 +24,16 @@ public class UserV2Controller {
     @Autowired
     private UserService userService;
 
-
     // built-in support for HEAD and OPTIONS for GET methods
     @GetMapping(value = "/users", produces = API_V2)
     public ResponseEntity<List<UserV2Dto>> getUsersV2() {
-        return ResponseEntity.ok(UserMapper.INSTANCE.mapToUsersV2(userService.getUsers()));
+        return ResponseEntity.ok(UserMapper.INSTANCE.mapToUsersV2(userService.findAllUsers()));
     }
 
 
     @GetMapping(value = "/users/{id}", produces = API_V2)
     public ResponseEntity<UserV2Dto> getUserV2(@PathVariable int id) {
-        Optional<User> user = userService.getUsers()
-                .stream()
-                .filter(u -> id == u.getId())
-                .findFirst();
+        Optional<User> user = userService.findUserById(id);
         return user
                 .map(u -> ResponseEntity.ok(UserMapper.INSTANCE.mapToUserV2Dto(u)))
                 .orElse(ResponseEntity.notFound().build());
@@ -51,16 +47,13 @@ public class UserV2Controller {
      */
     @PostMapping(value = "/users", consumes = API_V2)
     public ResponseEntity<Void> addUser(@RequestBody UserV2Dto newV2User) {
-        Optional<User> user = userService.getUsers()
-                .stream()
-                .filter(u -> newV2User.getId() == u.getId())
-                .findFirst();
+        Optional<User> user = userService.findUserById(newV2User.getId());
 
         if (user.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        userService.getUsers().add(UserMapper.INSTANCE.mapToUser(newV2User));
+        userService.findAllUsers().add(UserMapper.INSTANCE.mapToUser(newV2User));
         return ResponseEntity
                 .created(URI.create("/users/" + newV2User.getId()))
                 .build();
@@ -68,13 +61,10 @@ public class UserV2Controller {
 
     @PutMapping(value = "/users/{id}", consumes = API_V2)
     public ResponseEntity<Void> updateUser(@RequestBody UserV2Dto userV2Dto, @PathVariable int id) {
-        Optional<User> user = userService.getUsers()
-                .stream()
-                .filter(u -> id == u.getId())
-                .findFirst();
+        Optional<User> user = userService.findUserById(id);
 
         if (user.isEmpty()) {
-            userService.getUsers().add(UserMapper.INSTANCE.mapToUser(userV2Dto));
+            userService.findAllUsers().add(UserMapper.INSTANCE.mapToUser(userV2Dto));
             return ResponseEntity
                     .created(URI.create("/users/" + userV2Dto.getId()))
                     .build();
@@ -126,13 +116,11 @@ public class UserV2Controller {
          }
      ]
      */
+
     // do we need to version PATCH?!
     @PatchMapping(value = "/users/{id}", consumes = {APPLICATION_JSON_PATCH_V2_JSON})
     public ResponseEntity<Void> patchUserMethod2(@RequestBody JsonPatch patch, @PathVariable int id) {
-        Optional<User> user = userService.getUsers()
-                .stream()
-                .filter(u -> id == u.getId())
-                .findFirst();
+        Optional<User> user = userService.findUserById(id);
 
         if (user.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -140,7 +128,7 @@ public class UserV2Controller {
 
         try {
             UserV2Dto userV2DtoPatched = UserUtils.applyPatchToUserV2(patch, UserMapper.INSTANCE.mapToUserV2Dto(user.get()));
-            userService.getUsers().set(userService.getUsers().indexOf(user.get()), UserMapper.INSTANCE.mapToUser(userV2DtoPatched));
+            userService.findAllUsers().set(userService.findAllUsers().indexOf(user.get()), UserMapper.INSTANCE.mapToUser(userV2DtoPatched));
         } catch (JsonPatchException | JsonProcessingException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
