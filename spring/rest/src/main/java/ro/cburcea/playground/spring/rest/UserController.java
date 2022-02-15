@@ -4,44 +4,36 @@ package ro.cburcea.playground.spring.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import ro.cburcea.playground.spring.rest.dtos.UserDto;
 
-import javax.annotation.PostConstruct;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 public class UserController {
 
-    private List<User> users = new ArrayList<>();
+    private static final String API_V1 = "application/vnd.rest.v1+json";
+    private static final String APPLICATION_JSON_PATCH_V1_JSON = "application/json-patchv1+json";
 
-    @PostConstruct
-    public void init() {
-        users.add(new User(1, "firstName1", "lastName1", 34, Arrays.asList("Football", "Tennis")));
-        users.add(new User(2, "firstName2", "lastName2", 43, Arrays.asList("Football", "Basketball")));
-        users.add(new User(3, "firstName3", "lastName3", 35, Arrays.asList("Football", "Hiking")));
-    }
+    @Autowired
+    private UserService userService;
 
     // built-in support for HEAD and OPTIONS for GET methods
-    @GetMapping(value = "/users", produces = "application/vnd.rest.v1+json")
+    @GetMapping(value = "/users", produces = API_V1)
     public ResponseEntity<List<UserDto>> getUsers() {
-        return ResponseEntity.ok(UserMapper.INSTANCE.mapToUsers(users));
+        return ResponseEntity.ok(UserMapper.INSTANCE.mapToUsers(userService.getUsers()));
     }
 
-    @GetMapping(value = "/users", produces = "application/vnd.rest.v2+json")
-    public ResponseEntity<List<UserV2Dto>> getUsersV2() {
-        return ResponseEntity.ok(UserMapper.INSTANCE.mapToUsersV2(users));
-    }
 
-    @GetMapping(value = "/users/{id}", produces = "application/vnd.rest.v1+json")
+    @GetMapping(value = "/users/{id}", produces = API_V1)
     public ResponseEntity<UserDto> getUser(@PathVariable int id) {
-        Optional<User> user = users
+        Optional<User> user = userService.getUsers()
                 .stream()
                 .filter(u -> id == u.getId())
                 .findFirst();
@@ -50,20 +42,14 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping(value = "/users/{id}", produces = "application/vnd.rest.v2+json")
-    public ResponseEntity<UserV2Dto> getUserV2(@PathVariable int id) {
-        Optional<User> user = users
-                .stream()
-                .filter(u -> id == u.getId())
-                .findFirst();
-        return user
-                .map(u -> ResponseEntity.ok(UserMapper.INSTANCE.mapToUserV2Dto(u)))
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping("/users")
+    /**
+     * POST request creates a resource. The server assigns a URI for the new resource, and returns that URI to the client.
+     * In the REST model, you frequently apply POST requests to collections. The new resource is added to the collection.
+     * A POST request can also be used to submit data for processing to an existing resource, without any new resource being created.
+     */
+    @PostMapping(value = "/users", consumes = API_V1)
     public ResponseEntity<Void> addUser(@RequestBody UserDto newUser) {
-        Optional<User> user = users
+        Optional<User> user = userService.getUsers()
                 .stream()
                 .filter(u -> newUser.getId() == u.getId())
                 .findFirst();
@@ -72,7 +58,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        users.add(UserMapper.INSTANCE.map(newUser));
+        userService.getUsers().add(UserMapper.INSTANCE.mapToUser(newUser));
         return ResponseEntity
                 .created(URI.create("/users/" + newUser.getId()))
                 .build();
@@ -80,7 +66,7 @@ public class UserController {
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable int id) {
-        Optional<User> user = users
+        Optional<User> user = userService.getUsers()
                 .stream()
                 .filter(u -> id == u.getId())
                 .findFirst();
@@ -89,20 +75,28 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
 
-        users.remove(user.get());
+        userService.getUsers().remove(user.get());
         return ResponseEntity.noContent().build();
     }
 
-    // PUT replaces a resource entirely
-    @PutMapping("/users/{id}")
+    /**
+     * A PUT request creates a resource or updates an existing resource.
+     * The client specifies the URI for the resource. The request body contains a complete representation of the resource.
+     * If a resource with this URI already exists, it is replaced. Otherwise a new resource is created, if the server supports doing so.
+     * PUT requests are most frequently applied to resources that are individual items, such as a specific customer,
+     * rather than collections. A server might support updates but not creation via PUT. Whether to support creation via PUT
+     * depends on whether the client can meaningfully assign a URI to a resource before it exists.
+     * If not, then use POST to create resources and PUT or PATCH to update.
+     */
+    @PutMapping(value = "/users/{id}", consumes = API_V1)
     public ResponseEntity<Void> updateUser(@RequestBody UserDto userDto, @PathVariable int id) {
-        Optional<User> user = users
+        Optional<User> user = userService.getUsers()
                 .stream()
                 .filter(u -> id == u.getId())
                 .findFirst();
 
         if (user.isEmpty()) {
-            users.add(UserMapper.INSTANCE.map(userDto));
+            userService.getUsers().add(UserMapper.INSTANCE.mapToUser(userDto));
             return ResponseEntity
                     .created(URI.create("/users/" + userDto.getId()))
                     .build();
@@ -110,13 +104,19 @@ public class UserController {
         user.get().setFirstName(userDto.getFirstName());
         user.get().setLastName(userDto.getLastName());
         user.get().setAge(userDto.getAge());
+        user.get().setSports(userDto.getSports());
         return ResponseEntity.noContent().build();
     }
 
-    // partial update
-    @PatchMapping("/users/{id}")
+    /**
+     * A PATCH request performs a partial update to an existing resource. The client specifies the URI for the resource.
+     * The request body specifies a set of changes to apply to the resource. This can be more efficient than using PUT,
+     * because the client only sends the changes, not the entire representation of the resource.
+     * Technically PATCH can also create a new resource (by specifying a set of updates to a "null" resource), if the server supports this.
+     */
+    @PatchMapping(value = "/users/{id}", consumes = API_V1)
     public ResponseEntity<Void> patchUserMethod1(@RequestBody UserDto patchedUser, @PathVariable int id) {
-        Optional<User> user = users
+        Optional<User> user = userService.getUsers()
                 .stream()
                 .filter(u -> id == u.getId())
                 .findFirst();
@@ -134,49 +134,57 @@ public class UserController {
         if (patchedUser.getAge() > 0) {
             user.get().setAge(patchedUser.getAge());
         }
+        if (patchedUser.getSports() != null) {
+            user.get().setSports(patchedUser.getSports());
+        }
         return ResponseEntity.noContent().build();
     }
 
-    /*
-        PATCH method
-        Content-Type = application/json-patch+json
-        [
-            {
-            "op":"test",
-            "path":"/age",
-            "value": 43
-            },
-            {
-            "op":"replace",
-            "path":"/age",
-            "value":77
-            },
-            {
-            "op":"add",
-            "path":"/sports/0",
-            "value":"Handball"
-            },
-            {
-            "op":"remove",
-            "path":"/sports/1"
-            },
-            {
-            "op":"move",
-            "from":"/sports/0",
-            "path":"/sports/-"
-            },
-            {
-            "op":"copy",
-            "from":"/sports/0",
-            "path":"/sports/-"
-            }
-        ]
+    /**
+     * PATCH method
+     * Content-Type = application/json-patchv1+json
+     [
+     {
+         "op":"test",
+         "path":"/age",
+         "value": 77
+     },
+     {
+         "op":"replace",
+         "path":"/age",
+         "value":77
+     },
+     {
+         "op":"replace",
+         "path":"/name",
+         "value":"Fooo Baaar"
+     },
+     {
+         "op":"add",
+         "path":"/sports/0",
+         "value":"Handball"
+     },
+     {
+         "op":"remove",
+         "path":"/sports/1"
+     },
+     {
+         "op":"move",
+         "from":"/sports/0",
+         "path":"/sports/-"
+     },
+         {
+         "op":"copy",
+         "from":"/sports/0",
+         "path":"/sports/-"
+         }
+     ]
      */
 
-    // partial update
-    @PatchMapping(value = "/users/{id}", consumes = "application/json-patch+json")
+    // do we need to version PATCH?!
+    @PatchMapping(value = "/users/{id}", consumes = {APPLICATION_JSON_PATCH_V1_JSON})
     public ResponseEntity<Void> patchUserMethod2(@RequestBody JsonPatch patch, @PathVariable int id) {
-        Optional<User> user = users
+        Optional<User> user = userService.getUsers()
                 .stream()
                 .filter(u -> id == u.getId())
                 .findFirst();
@@ -186,8 +194,8 @@ public class UserController {
         }
 
         try {
-            User userPatched = UserUtils.applyPatchToCustomer(patch, user.get());
-            users.set(users.indexOf(user.get()), userPatched);
+            UserDto userDtoPatched = UserUtils.applyPatchToUser(patch, UserMapper.INSTANCE.mapToUserDto(user.get()));
+            userService.getUsers().set(userService.getUsers().indexOf(user.get()), UserMapper.INSTANCE.mapToUser(userDtoPatched));
         } catch (JsonPatchException | JsonProcessingException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

@@ -1,9 +1,9 @@
-package ro.cburcea.playground.spring.rest;
+package ro.cburcea.playground.spring.rest.dtos;
 
 import java.util.List;
 
 
-public class User {
+public class UserDto {
 
     private int id;
     private String firstName;
@@ -11,9 +11,10 @@ public class User {
     private int age;
     private List<String> sports;
 
-    public User(){}
+    public UserDto() {
+    }
 
-    public User(int id, String firstName, String lastName, int age, List<String> sports) {
+    public UserDto(int id, String firstName, String lastName, int age, List<String> sports) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
