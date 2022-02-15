@@ -16,8 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-@org.springframework.web.bind.annotation.RestController
-public class RestController {
+@RestController
+public class UserController {
 
     private List<User> users = new ArrayList<>();
 
@@ -29,22 +29,40 @@ public class RestController {
     }
 
     // built-in support for HEAD and OPTIONS for GET methods
-    @GetMapping("/users")
-    public ResponseEntity<List<User>> getUsers() {
-        return ResponseEntity.ok(users);
+    @GetMapping(value = "/users", produces = "application/vnd.rest.v1+json")
+    public ResponseEntity<List<UserDto>> getUsers() {
+        return ResponseEntity.ok(UserMapper.INSTANCE.mapToUsers(users));
     }
 
-    @GetMapping("/users/{id}")
-    public ResponseEntity<User> getUser(@PathVariable int id) {
+    @GetMapping(value = "/users", produces = "application/vnd.rest.v2+json")
+    public ResponseEntity<List<UserV2Dto>> getUsersV2() {
+        return ResponseEntity.ok(UserMapper.INSTANCE.mapToUsersV2(users));
+    }
+
+    @GetMapping(value = "/users/{id}", produces = "application/vnd.rest.v1+json")
+    public ResponseEntity<UserDto> getUser(@PathVariable int id) {
         Optional<User> user = users
                 .stream()
                 .filter(u -> id == u.getId())
                 .findFirst();
-        return ResponseEntity.of(user); //200 or 404
+        return user
+                .map(u -> ResponseEntity.ok(UserMapper.INSTANCE.mapToUserDto(u)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping(value = "/users/{id}", produces = "application/vnd.rest.v2+json")
+    public ResponseEntity<UserV2Dto> getUserV2(@PathVariable int id) {
+        Optional<User> user = users
+                .stream()
+                .filter(u -> id == u.getId())
+                .findFirst();
+        return user
+                .map(u -> ResponseEntity.ok(UserMapper.INSTANCE.mapToUserV2Dto(u)))
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/users")
-    public ResponseEntity<Void> addUser(@RequestBody User newUser) {
+    public ResponseEntity<Void> addUser(@RequestBody UserDto newUser) {
         Optional<User> user = users
                 .stream()
                 .filter(u -> newUser.getId() == u.getId())
@@ -54,7 +72,7 @@ public class RestController {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        users.add(newUser);
+        users.add(UserMapper.INSTANCE.map(newUser));
         return ResponseEntity
                 .created(URI.create("/users/" + newUser.getId()))
                 .build();
@@ -77,14 +95,14 @@ public class RestController {
 
     // PUT replaces a resource entirely
     @PutMapping("/users/{id}")
-    public ResponseEntity<Void> updateUser(@RequestBody User userDto, @PathVariable int id) {
+    public ResponseEntity<Void> updateUser(@RequestBody UserDto userDto, @PathVariable int id) {
         Optional<User> user = users
                 .stream()
                 .filter(u -> id == u.getId())
                 .findFirst();
 
         if (user.isEmpty()) {
-            users.add(userDto);
+            users.add(UserMapper.INSTANCE.map(userDto));
             return ResponseEntity
                     .created(URI.create("/users/" + userDto.getId()))
                     .build();
@@ -97,7 +115,7 @@ public class RestController {
 
     // partial update
     @PatchMapping("/users/{id}")
-    public ResponseEntity<Void> patchUserMethod1(@RequestBody User patchedUser, @PathVariable int id) {
+    public ResponseEntity<Void> patchUserMethod1(@RequestBody UserDto patchedUser, @PathVariable int id) {
         Optional<User> user = users
                 .stream()
                 .filter(u -> id == u.getId())
