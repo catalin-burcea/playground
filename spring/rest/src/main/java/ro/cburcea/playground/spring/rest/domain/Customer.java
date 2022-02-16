@@ -1,25 +1,25 @@
-package ro.cburcea.playground.spring.rest.dtos;
+package ro.cburcea.playground.spring.rest.domain;
 
 import java.util.List;
 
 
-public class UserDto {
+public class Customer {
 
     private int id;
     private String firstName;
     private String lastName;
     private int age;
-    private List<String> sports;
+    private List<Order> orders;
 
-    public UserDto() {
+    public Customer() {
     }
 
-    public UserDto(int id, String firstName, String lastName, int age, List<String> sports) {
+    public Customer(int id, String firstName, String lastName, int age, List<Order> orders) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
-        this.sports = sports;
+        this.orders = orders;
     }
 
     public int getId() {
@@ -54,11 +54,11 @@ public class UserDto {
         this.age = age;
     }
 
-    public List<String> getSports() {
-        return sports;
+    public List<Order> getOrders() {
+        return orders;
     }
 
-    public void setSports(List<String> sports) {
-        this.sports = sports;
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
     }
 }

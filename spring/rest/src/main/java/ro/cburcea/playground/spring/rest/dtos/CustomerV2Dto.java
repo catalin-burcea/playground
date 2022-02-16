@@ -3,21 +3,21 @@ package ro.cburcea.playground.spring.rest.dtos;
 import java.util.List;
 
 
-public class UserV2Dto {
+public class CustomerV2Dto {
 
     private int id;
     private String name;
     private int age;
-    private List<String> sports;
+    private List<OrderDto> orders;
 
-    public UserV2Dto() {
+    public CustomerV2Dto() {
     }
 
-    public UserV2Dto(int id, String name, int age, List<String> sports) {
+    public CustomerV2Dto(int id, String name, int age, List<OrderDto> orders) {
         this.id = id;
         this.name = name;
         this.age = age;
-        this.sports = sports;
+        this.orders = orders;
     }
 
     public int getId() {
@@ -44,11 +44,11 @@ public class UserV2Dto {
         this.age = age;
     }
 
-    public List<String> getSports() {
-        return sports;
+    public List<OrderDto> getOrders() {
+        return orders;
     }
 
-    public void setSports(List<String> sports) {
-        this.sports = sports;
+    public void setOrders(List<OrderDto> orders) {
+        this.orders = orders;
     }
 }
