@@ -39,7 +39,7 @@ public class CustomerV2Controller {
 
 
     @GetMapping(value = "/{id}", produces = API_V2)
-    public ResponseEntity<CustomerV2Dto> getCustomerById(@PathVariable int id) {
+    public ResponseEntity<CustomerV2Dto> getCustomerById(@PathVariable Long id) {
         return customerService.findById(id)
                 .map(customer -> ResponseEntity.ok(CustomerMapper.INSTANCE.mapToCustomerV2Dto(customer)))
                 .orElse(ResponseEntity.notFound().build());
@@ -66,17 +66,18 @@ public class CustomerV2Controller {
     }
 
     @PutMapping(value = "/{id}", consumes = API_V2)
-    public ResponseEntity<Void> updateCustomer(@RequestBody CustomerV2Dto customerV2Dto, @PathVariable int id) {
+    public ResponseEntity<Void> updateCustomer(@RequestBody CustomerV2Dto customerV2Dto, @PathVariable Long id) {
         Optional<Customer> optionalCustomer = customerService.findById(id);
 
-        Customer updatedCustomer = CustomerMapper.INSTANCE.mapToCustomer(customerV2Dto);
         if (optionalCustomer.isEmpty()) {
+            Customer updatedCustomer = CustomerMapper.INSTANCE.mapToCustomer(customerV2Dto);
             Customer newCustomer = customerService.insert(updatedCustomer);
             return ResponseEntity
                     .created(linkTo(CustomerController.class).slash(newCustomer.getId()).toUri())
                     .build();
         }
-        customerService.update(optionalCustomer.get(), updatedCustomer);
+        Customer customer = CustomerMapper.INSTANCE.updateCustomerFromV2Dto(customerV2Dto, optionalCustomer.get());
+        customerService.update(customer);
         return ResponseEntity.noContent().build();
     }
 
@@ -128,7 +129,7 @@ public class CustomerV2Controller {
 
     // do we need to version PATCH?!
     @PatchMapping(value = "/{id}", consumes = {APPLICATION_JSON_PATCH_V2_JSON})
-    public ResponseEntity<Void> patchCustomerMethod2(@RequestBody JsonPatch patch, @PathVariable int id) {
+    public ResponseEntity<Void> patchCustomerMethod2(@RequestBody JsonPatch patch, @PathVariable Long id) {
         Optional<Customer> customer = customerService.findById(id);
 
         if (customer.isEmpty()) {
@@ -137,8 +138,8 @@ public class CustomerV2Controller {
 
         try {
             CustomerV2Dto customerV2DtoPatched = Utils.applyPatchToCustomerV2(patch, CustomerMapper.INSTANCE.mapToCustomerV2Dto(customer.get()));
-            Customer patchedCustomer = CustomerMapper.INSTANCE.mapToCustomer(customerV2DtoPatched);
-            customerService.update(customer.get(), patchedCustomer);
+            Customer patchedCustomer = CustomerMapper.INSTANCE.updateCustomerFromV2Dto(customerV2DtoPatched, customer.get());
+            customerService.update(patchedCustomer);
         } catch (JsonPatchException | JsonProcessingException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

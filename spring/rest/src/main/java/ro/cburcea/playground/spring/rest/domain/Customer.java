@@ -1,32 +1,43 @@
 package ro.cburcea.playground.spring.rest.domain;
 
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
+@Entity
+@Table(name = "customers")
 public class Customer {
 
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String firstName;
     private String lastName;
     private int age;
-    private List<Order> orders;
+
+    @OneToMany(
+            mappedBy = "customer",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
+    )
+    private List<Order> orders = new ArrayList<>();
 
     public Customer() {
     }
 
-    public Customer(int id, String firstName, String lastName, int age, List<Order> orders) {
-        this.id = id;
+    public Customer(String firstName, String lastName, int age) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
-        this.orders = orders;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -60,5 +71,15 @@ public class Customer {
 
     public void setOrders(List<Order> orders) {
         this.orders = orders;
+    }
+
+    public void addOrder(Order order) {
+        orders.add(order);
+        order.setCustomer(this);
+    }
+
+    public void removeOrder(Order order) {
+        orders.remove(order);
+        order.setCustomer(null);
     }
 }

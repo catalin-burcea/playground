@@ -5,7 +5,7 @@ import java.util.List;
 
 public class CustomerV2Dto {
 
-    private int id;
+    private Long id;
     private String name;
     private int age;
     private List<OrderDto> orders;
@@ -13,18 +13,18 @@ public class CustomerV2Dto {
     public CustomerV2Dto() {
     }
 
-    public CustomerV2Dto(int id, String name, int age, List<OrderDto> orders) {
+    public CustomerV2Dto(Long id, String name, int age, List<OrderDto> orders) {
         this.id = id;
         this.name = name;
         this.age = age;
         this.orders = orders;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

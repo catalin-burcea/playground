@@ -5,7 +5,7 @@ import java.util.List;
 
 public class CustomerDto {
 
-    private int id;
+    private Long id;
     private String firstName;
     private String lastName;
     private int age;
@@ -14,7 +14,7 @@ public class CustomerDto {
     public CustomerDto() {
     }
 
-    public CustomerDto(int id, String firstName, String lastName, int age, List<OrderDto> orders) {
+    public CustomerDto(Long id, String firstName, String lastName, int age, List<OrderDto> orders) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -22,11 +22,11 @@ public class CustomerDto {
         this.orders = orders;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

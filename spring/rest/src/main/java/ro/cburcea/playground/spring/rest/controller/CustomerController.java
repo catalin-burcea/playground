@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import ro.cburcea.playground.spring.rest.Utils;
 import ro.cburcea.playground.spring.rest.domain.Customer;
@@ -48,14 +47,17 @@ public class CustomerController {
 
 
     @GetMapping(value = "/{id}", produces = API_V1)
-    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable int id) {
+    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable Long id) {
         return customerService.findById(id)
                 .map(customer -> ResponseEntity.ok(CustomerMapper.INSTANCE.mapToCustomerDto(customer)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping(value = "/{id}/orders", produces = API_V1)
-    public ResponseEntity<List<OrderDto>> getCustomerOrders(@PathVariable int id) {
+    public ResponseEntity<List<OrderDto>> getCustomerOrders(@PathVariable Long id) {
+        if (customerService.findById(id).isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         final CacheControl cacheControl = CacheControl.maxAge(30, TimeUnit.SECONDS);
         final List<Order> orders = customerService.findAllOrdersByCustomerId(id);
         return ResponseEntity
@@ -85,7 +87,7 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable int id) {
+    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
         Optional<Customer> customer = customerService.findById(id);
 
         if (customer.isEmpty()) {
@@ -106,17 +108,18 @@ public class CustomerController {
      * If not, then use POST to create resources and PUT or PATCH to update.
      */
     @PutMapping(value = "/{id}", consumes = API_V1)
-    public ResponseEntity<Void> updateCustomer(@RequestBody CustomerDto customerDto, @PathVariable int id) {
+    public ResponseEntity<Void> updateCustomer(@RequestBody CustomerDto customerDto, @PathVariable Long id) {
         Optional<Customer> optionalCustomer = customerService.findById(id);
 
-        Customer updatedCustomer = CustomerMapper.INSTANCE.mapToCustomer(customerDto);
         if (optionalCustomer.isEmpty()) {
+            Customer updatedCustomer = CustomerMapper.INSTANCE.mapToCustomer(customerDto);
             Customer newCustomer = customerService.insert(updatedCustomer);
             return ResponseEntity
                     .created(linkTo(CustomerController.class).slash(newCustomer.getId()).toUri())
                     .build();
         }
-        customerService.update(optionalCustomer.get(), updatedCustomer);
+        Customer customer = CustomerMapper.INSTANCE.updateCustomerFromDto(customerDto, optionalCustomer.get());
+        customerService.update(customer);
         return ResponseEntity.noContent().build();
     }
 
@@ -127,23 +130,16 @@ public class CustomerController {
      * Technically PATCH can also create a new resource (by specifying a set of updates to a "null" resource), if the server supports this.
      */
     @PatchMapping(value = "/{id}", consumes = API_V1)
-    public ResponseEntity<Void> patchCustomerMethod1(@RequestBody CustomerDto patchedCustomer, @PathVariable int id) {
+    public ResponseEntity<Void> patchCustomerMethod1(@RequestBody CustomerDto patchedCustomer, @PathVariable Long id) {
         Optional<Customer> optionalCustomer = customerService.findById(id);
 
         if (optionalCustomer.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        final Customer customer = optionalCustomer.get();
-        if (StringUtils.hasLength(patchedCustomer.getFirstName())) {
-            customer.setFirstName(patchedCustomer.getFirstName());
-        }
-        if (StringUtils.hasLength(patchedCustomer.getLastName())) {
-            customer.setLastName(patchedCustomer.getLastName());
-        }
-        if (patchedCustomer.getAge() > 0) {
-            customer.setAge(patchedCustomer.getAge());
-        }
+        Customer customer = CustomerMapper.INSTANCE.updateCustomerFromDto(patchedCustomer, optionalCustomer.get());
+
+        customerService.update(customer);
         return ResponseEntity.noContent().build();
     }
 
@@ -195,7 +191,7 @@ public class CustomerController {
 
     // do we need to version PATCH?!
     @PatchMapping(value = "/{id}", consumes = {APPLICATION_JSON_PATCH_V1_JSON})
-    public ResponseEntity<Void> patchCustomerMethod2(@RequestBody JsonPatch patch, @PathVariable int id) {
+    public ResponseEntity<Void> patchCustomerMethod2(@RequestBody JsonPatch patch, @PathVariable Long id) {
         Optional<Customer> customer = customerService.findById(id);
 
         if (customer.isEmpty()) {
@@ -204,8 +200,8 @@ public class CustomerController {
 
         try {
             CustomerDto customerDtoPatched = Utils.applyPatchToCustomer(patch, CustomerMapper.INSTANCE.mapToCustomerDto(customer.get()));
-            Customer patchedCustomer = CustomerMapper.INSTANCE.mapToCustomer(customerDtoPatched);
-            customerService.update(customer.get(), patchedCustomer);
+            Customer patchedCustomer = CustomerMapper.INSTANCE.updateCustomerFromDto(customerDtoPatched, customer.get());
+            customerService.update(patchedCustomer);
         } catch (JsonPatchException | JsonProcessingException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

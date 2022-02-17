@@ -3,25 +3,25 @@ package ro.cburcea.playground.spring.rest.dtos;
 
 public class OrderDto {
 
-    private int orderId;
+    private Long id;
     private int price;
     private int quantity;
 
     public OrderDto() {
     }
 
-    public OrderDto(final int orderId, final int price, final int quantity) {
-        this.orderId = orderId;
+    public OrderDto(final Long id, final int price, final int quantity) {
+        this.id = id;
         this.price = price;
         this.quantity = quantity;
     }
 
-    public int getOrderId() {
-        return orderId;
+    public Long getId() {
+        return id;
     }
 
-    public void setOrderId(final int orderId) {
-        this.orderId = orderId;
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public int getPrice() {
@@ -42,6 +42,6 @@ public class OrderDto {
 
     @Override
     public String toString() {
-        return "Order [orderId=" + orderId + ", price=" + price + ", quantity=" + quantity + "]";
+        return "Order [id=" + id + ", price=" + price + ", quantity=" + quantity + "]";
     }
 }
