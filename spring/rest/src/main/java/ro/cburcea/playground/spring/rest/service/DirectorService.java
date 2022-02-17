@@ -1,13 +1,14 @@
 package ro.cburcea.playground.spring.rest.service;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ro.cburcea.playground.spring.rest.domain.Director;
 import ro.cburcea.playground.spring.rest.domain.Movie;
+import ro.cburcea.playground.spring.rest.repository.DirectorRepository;
+import ro.cburcea.playground.spring.rest.repository.MovieRepository;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -15,43 +16,51 @@ import java.util.stream.Collectors;
 @Service
 public class DirectorService {
 
-    private List<Director> directors = new ArrayList<>();
+    @Autowired
+    private DirectorRepository directorRepository;
+    @Autowired
+    private MovieRepository movieRepository;
 
     @PostConstruct
     public void init() {
 
         for (int i = 1; i < 10; i++) {
-            directors.add(new Director(i, "firstName" + i, "lastName" + i, 1950 + i,
-                    Arrays.asList(
-                            new Movie(i * i, "Title" + i, 1980 + i, i),
-                            new Movie(i * i + 1, "Title" + i + 1, 1980 + i, i)
-                    )));
+            Director director = new Director("firstName" + i, "lastName" + i, 1950 + i);
+            directorRepository.save(director);
+            final Movie movie1 = new Movie("Title" + i, 1980 + i, i);
+            final Movie movie2 = new Movie("Title" + i + 1, 1980 + i, i);
+            movieRepository.save(movie1);
+            movieRepository.save(movie2);
+            director.addMovie(movie1);
+            director.addMovie(movie2);
+            directorRepository.save(director);
         }
 
     }
 
     public List<Director> findAll() {
-        return directors;
+        return directorRepository.findAll();
     }
 
-    public List<Movie> findAllMoviesByDirectorId(int id) {
-        return directors
+    public List<Movie> findAllMoviesByDirectorId(Long id) {
+        return directorRepository.findAll()
                 .stream()
-                .filter(dir -> id == dir.getId())
+                .filter(dir -> id.equals(dir.getId()))
                 .map(Director::getMovies)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
     }
 
-    public Optional<Director> findById(int id) {
-        return directors
-                .stream()
-                .filter(dir -> id == dir.getId())
-                .findFirst();
+    public Optional<Director> findById(Long id) {
+        return directorRepository.findById(id);
     }
 
     public void insert(Director director) {
-        directors.add(director);
+        directorRepository.save(director);
+    }
+
+    public void update(Director director) {
+        directorRepository.save(director);
     }
 
 }

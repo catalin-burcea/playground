@@ -1,52 +1,82 @@
 package ro.cburcea.playground.spring.rest.domain;
 
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "movies")
 public class Movie {
 
-   private int id;
-   private String title;
-   private int year;
-   private int rating;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String title;
+    private int year;
+    private int rating;
 
-   public Movie() {
-   }
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Director director;
 
-   public Movie(int id, String title, int year, int rating) {
-      this.id = id;
-      this.title = title;
-      this.year = year;
-      this.rating = rating;
-   }
+    public Movie() {
+    }
 
-   public int getId() {
-      return id;
-   }
+    public Movie(String title, int year, int rating) {
+        this.title = title;
+        this.year = year;
+        this.rating = rating;
+    }
 
-   public void setId(int id) {
-      this.id = id;
-   }
+    public Long getId() {
+        return id;
+    }
 
-   public String getTitle() {
-      return title;
-   }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-   public void setTitle(String title) {
-      this.title = title;
-   }
+    public String getTitle() {
+        return title;
+    }
 
-   public int getYear() {
-      return year;
-   }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-   public void setYear(int year) {
-      this.year = year;
-   }
+    public int getYear() {
+        return year;
+    }
 
-   public int getRating() {
-      return rating;
-   }
+    public void setYear(int year) {
+        this.year = year;
+    }
 
-   public void setRating(int rating) {
-      this.rating = rating;
-   }
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public Director getDirector() {
+        return director;
+    }
+
+    public void setDirector(Director director) {
+        this.director = director;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Movie)) return false;
+        return id != null && id.equals(((Movie) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        //Objects.hash(id, price, quantity);
+        return getClass().hashCode();
+    }
+
 }

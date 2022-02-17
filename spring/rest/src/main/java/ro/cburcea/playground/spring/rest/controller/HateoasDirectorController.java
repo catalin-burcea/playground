@@ -46,7 +46,7 @@ public class HateoasDirectorController {
 
 
     @GetMapping(value = "/{id}", produces = APPLICATION_HAL_JSON)
-    public ResponseEntity<DirectorDto> getDirectorById(@PathVariable int id) {
+    public ResponseEntity<DirectorDto> getDirectorById(@PathVariable Long id) {
         return directorService.findById(id)
                 .map(DirectorMapper.INSTANCE::mapToDirectorDto)
                 .map(director -> {
@@ -60,7 +60,7 @@ public class HateoasDirectorController {
     }
 
     @GetMapping(value = "/{id}/movies", produces = APPLICATION_HAL_JSON)
-    public ResponseEntity<CollectionModel<MovieDto>> getDirectorMovies(@PathVariable int id) {
+    public ResponseEntity<CollectionModel<MovieDto>> getDirectorMovies(@PathVariable Long id) {
         final List<Movie> movies = directorService.findAllMoviesByDirectorId(id);
         List<MovieDto> movieDtos = MovieMapper.INSTANCE.mapToMoviesDto(movies);
 

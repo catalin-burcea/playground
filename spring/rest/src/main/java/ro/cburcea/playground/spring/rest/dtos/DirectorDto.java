@@ -9,7 +9,7 @@ import java.util.Set;
 @Relation(itemRelation = "director", collectionRelation = "directors")
 public class DirectorDto extends RepresentationModel<DirectorDto> {
     
-    private int id;
+    private Long id;
     private String firstname;
     private String lastname;
     private int year;
@@ -17,18 +17,18 @@ public class DirectorDto extends RepresentationModel<DirectorDto> {
     public DirectorDto() {
     }
 
-    public DirectorDto(int id, String firstname, String lastname, int year, Set<MovieDto> movies) {
+    public DirectorDto(Long id, String firstname, String lastname, int year, Set<MovieDto> movies) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
         this.year = year;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

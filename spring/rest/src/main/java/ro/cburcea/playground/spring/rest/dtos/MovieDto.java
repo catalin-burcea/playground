@@ -8,7 +8,7 @@ import org.springframework.hateoas.server.core.Relation;
 @Relation(itemRelation = "movie", collectionRelation = "movies")
 public class MovieDto extends RepresentationModel<MovieDto> {
 
-    private int id;
+    private Long id;
     private String title;
     private int year;
     private int rating;
@@ -16,18 +16,18 @@ public class MovieDto extends RepresentationModel<MovieDto> {
     public MovieDto() {
     }
 
-    public MovieDto(int id, String title, int year, int rating) {
+    public MovieDto(Long id, String title, int year, int rating) {
         this.id = id;
         this.title = title;
         this.year = year;
         this.rating = rating;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
