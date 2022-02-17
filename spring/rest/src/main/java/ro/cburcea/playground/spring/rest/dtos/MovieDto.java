@@ -2,7 +2,10 @@ package ro.cburcea.playground.spring.rest.dtos;
 
 
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
+
+@Relation(itemRelation = "movie", collectionRelation = "movies")
 public class MovieDto extends RepresentationModel<MovieDto> {
 
     private int id;

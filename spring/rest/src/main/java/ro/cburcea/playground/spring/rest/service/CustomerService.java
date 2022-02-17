@@ -50,8 +50,14 @@ public class CustomerService {
                 .findFirst();
     }
 
-    public void insert(Customer customer) {
+    public Customer insert(Customer customer) {
         customers.add(customer);
+        return customer;
     }
+
+    public void update(Customer oldCustomer, Customer updatedCustomer) {
+        customers.set(customers.indexOf(oldCustomer), updatedCustomer);
+    }
+
 
 }

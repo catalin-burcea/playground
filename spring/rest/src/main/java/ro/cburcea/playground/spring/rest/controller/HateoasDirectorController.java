@@ -6,6 +6,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ro.cburcea.playground.spring.rest.domain.Director;
 import ro.cburcea.playground.spring.rest.domain.Movie;
@@ -22,12 +23,14 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
+@RequestMapping("/directors")
 public class HateoasDirectorController {
 
+    private static final String APPLICATION_HAL_JSON = "application/hal+json";
     @Autowired
     private DirectorService directorService;
 
-    @GetMapping(value = "/directors")
+    @GetMapping(produces = APPLICATION_HAL_JSON)
     public ResponseEntity<CollectionModel<DirectorDto>> getAllDirectors() {
         final List<Director> directors = directorService.findAll();
         List<DirectorDto> directorDtos = DirectorMapper.INSTANCE.mapToDirectorsDto(directors);
@@ -42,7 +45,7 @@ public class HateoasDirectorController {
     }
 
 
-    @GetMapping(value = "/directors/{id}")
+    @GetMapping(value = "/{id}", produces = APPLICATION_HAL_JSON)
     public ResponseEntity<DirectorDto> getDirectorById(@PathVariable int id) {
         return directorService.findById(id)
                 .map(DirectorMapper.INSTANCE::mapToDirectorDto)
@@ -56,7 +59,7 @@ public class HateoasDirectorController {
 
     }
 
-    @GetMapping(value = "/directors/{id}/movies")
+    @GetMapping(value = "/{id}/movies", produces = APPLICATION_HAL_JSON)
     public ResponseEntity<CollectionModel<MovieDto>> getDirectorMovies(@PathVariable int id) {
         final List<Movie> movies = directorService.findAllMoviesByDirectorId(id);
         List<MovieDto> movieDtos = MovieMapper.INSTANCE.mapToMoviesDto(movies);

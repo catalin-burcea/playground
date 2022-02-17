@@ -2,9 +2,11 @@ package ro.cburcea.playground.spring.rest.dtos;
 
 
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 import java.util.Set;
 
+@Relation(itemRelation = "director", collectionRelation = "directors")
 public class DirectorDto extends RepresentationModel<DirectorDto> {
     
     private int id;

@@ -19,12 +19,14 @@ import ro.cburcea.playground.spring.rest.mapper.CustomerMapper;
 import ro.cburcea.playground.spring.rest.mapper.OrderMapper;
 import ro.cburcea.playground.spring.rest.service.CustomerService;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+
 @RestController
+@RequestMapping("/customers")
 public class CustomerController {
 
     private static final String API_V1 = "application/vnd.rest.v1+json";
@@ -34,7 +36,7 @@ public class CustomerController {
     private CustomerService customerService;
 
     // built-in support for HEAD and OPTIONS for GET methods
-    @GetMapping(value = "/customers", produces = API_V1)
+    @GetMapping(produces = API_V1)
     public ResponseEntity<List<CustomerDto>> getAllCustomers() {
         final CacheControl cacheControl = CacheControl.maxAge(30, TimeUnit.SECONDS);
         final List<Customer> customers = customerService.findAll();
@@ -45,14 +47,14 @@ public class CustomerController {
     }
 
 
-    @GetMapping(value = "/customers/{id}", produces = API_V1)
+    @GetMapping(value = "/{id}", produces = API_V1)
     public ResponseEntity<CustomerDto> getCustomerById(@PathVariable int id) {
         return customerService.findById(id)
                 .map(customer -> ResponseEntity.ok(CustomerMapper.INSTANCE.mapToCustomerDto(customer)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping(value = "/customers/{id}/orders", produces = API_V1)
+    @GetMapping(value = "/{id}/orders", produces = API_V1)
     public ResponseEntity<List<OrderDto>> getCustomerOrders(@PathVariable int id) {
         final CacheControl cacheControl = CacheControl.maxAge(30, TimeUnit.SECONDS);
         final List<Order> orders = customerService.findAllOrdersByCustomerId(id);
@@ -68,7 +70,7 @@ public class CustomerController {
      * In the REST model, you frequently apply POST requests to collections. The new resource is added to the collection.
      * A POST request can also be used to submit data for processing to an existing resource, without any new resource being created.
      */
-    @PostMapping(value = "/customers", consumes = API_V1)
+    @PostMapping(consumes = API_V1)
     public ResponseEntity<Void> addCustomer(@RequestBody CustomerDto newCustomerDto) {
         Optional<Customer> customer = customerService.findById(newCustomerDto.getId());
 
@@ -76,13 +78,13 @@ public class CustomerController {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        customerService.insert(CustomerMapper.INSTANCE.mapToCustomer(newCustomerDto));
+        Customer newCustomer = customerService.insert(CustomerMapper.INSTANCE.mapToCustomer(newCustomerDto));
         return ResponseEntity
-                .created(URI.create("/customers/" + newCustomerDto.getId()))
+                .created(linkTo(CustomerController.class).slash(newCustomer.getId()).toUri())
                 .build();
     }
 
-    @DeleteMapping("/customers/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable int id) {
         Optional<Customer> customer = customerService.findById(id);
 
@@ -103,20 +105,18 @@ public class CustomerController {
      * depends on whether the client can meaningfully assign a URI to a resource before it exists.
      * If not, then use POST to create resources and PUT or PATCH to update.
      */
-    @PutMapping(value = "/customers/{id}", consumes = API_V1)
+    @PutMapping(value = "/{id}", consumes = API_V1)
     public ResponseEntity<Void> updateCustomer(@RequestBody CustomerDto customerDto, @PathVariable int id) {
         Optional<Customer> optionalCustomer = customerService.findById(id);
 
+        Customer updatedCustomer = CustomerMapper.INSTANCE.mapToCustomer(customerDto);
         if (optionalCustomer.isEmpty()) {
-            customerService.insert(CustomerMapper.INSTANCE.mapToCustomer(customerDto));
+            Customer newCustomer = customerService.insert(updatedCustomer);
             return ResponseEntity
-                    .created(URI.create("/customers/" + customerDto.getId()))
+                    .created(linkTo(CustomerController.class).slash(newCustomer.getId()).toUri())
                     .build();
         }
-        final Customer customer = optionalCustomer.get();
-        customer.setFirstName(customerDto.getFirstName());
-        customer.setLastName(customerDto.getLastName());
-        customer.setAge(customerDto.getAge());
+        customerService.update(optionalCustomer.get(), updatedCustomer);
         return ResponseEntity.noContent().build();
     }
 
@@ -126,7 +126,7 @@ public class CustomerController {
      * because the client only sends the changes, not the entire representation of the resource.
      * Technically PATCH can also create a new resource (by specifying a set of updates to a "null" resource), if the server supports this.
      */
-    @PatchMapping(value = "/customers/{id}", consumes = API_V1)
+    @PatchMapping(value = "/{id}", consumes = API_V1)
     public ResponseEntity<Void> patchCustomerMethod1(@RequestBody CustomerDto patchedCustomer, @PathVariable int id) {
         Optional<Customer> optionalCustomer = customerService.findById(id);
 
@@ -194,7 +194,7 @@ public class CustomerController {
      */
 
     // do we need to version PATCH?!
-    @PatchMapping(value = "/customers/{id}", consumes = {APPLICATION_JSON_PATCH_V1_JSON})
+    @PatchMapping(value = "/{id}", consumes = {APPLICATION_JSON_PATCH_V1_JSON})
     public ResponseEntity<Void> patchCustomerMethod2(@RequestBody JsonPatch patch, @PathVariable int id) {
         Optional<Customer> customer = customerService.findById(id);
 
@@ -204,7 +204,8 @@ public class CustomerController {
 
         try {
             CustomerDto customerDtoPatched = Utils.applyPatchToCustomer(patch, CustomerMapper.INSTANCE.mapToCustomerDto(customer.get()));
-            customerService.findAll().set(customerService.findAll().indexOf(customer.get()), CustomerMapper.INSTANCE.mapToCustomer(customerDtoPatched));
+            Customer patchedCustomer = CustomerMapper.INSTANCE.mapToCustomer(customerDtoPatched);
+            customerService.update(customer.get(), patchedCustomer);
         } catch (JsonPatchException | JsonProcessingException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
