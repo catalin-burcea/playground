@@ -26,8 +26,8 @@ public interface CustomerMapper {
     @Mapping(target = "lastName", expression = "java(customerV2Dto.getName().split(\" \")[1])")
     Customer mapToCustomer(CustomerV2Dto customerV2Dto);
 
-    List<CustomerDto> mapToCustomers(List<Customer> customers);
+    List<CustomerDto> mapToCustomersDto(List<Customer> customers);
 
-    List<CustomerV2Dto> mapToCustomersV2(List<Customer> customers);
+    List<CustomerV2Dto> mapToCustomersV2Dto(List<Customer> customers);
 
 }

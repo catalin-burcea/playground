@@ -35,18 +35,18 @@ public class CustomerController {
 
     // built-in support for HEAD and OPTIONS for GET methods
     @GetMapping(value = "/customers", produces = API_V1)
-    public ResponseEntity<List<CustomerDto>> getCustomer() {
+    public ResponseEntity<List<CustomerDto>> getAllCustomers() {
         final CacheControl cacheControl = CacheControl.maxAge(30, TimeUnit.SECONDS);
         final List<Customer> customers = customerService.findAll();
         return ResponseEntity
                 .ok()
                 .cacheControl(cacheControl)
-                .body(CustomerMapper.INSTANCE.mapToCustomers(customers));
+                .body(CustomerMapper.INSTANCE.mapToCustomersDto(customers));
     }
 
 
     @GetMapping(value = "/customers/{id}", produces = API_V1)
-    public ResponseEntity<CustomerDto> getCustomer(@PathVariable int id) {
+    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable int id) {
         return customerService.findById(id)
                 .map(customer -> ResponseEntity.ok(CustomerMapper.INSTANCE.mapToCustomerDto(customer)))
                 .orElse(ResponseEntity.notFound().build());
@@ -59,7 +59,7 @@ public class CustomerController {
         return ResponseEntity
                 .ok()
                 .cacheControl(cacheControl)
-                .body(OrderMapper.INSTANCE.mapToOrders(orders));
+                .body(OrderMapper.INSTANCE.mapToOrdersDto(orders));
     }
 
 

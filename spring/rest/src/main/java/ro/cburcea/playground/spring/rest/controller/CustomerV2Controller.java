@@ -30,14 +30,14 @@ public class CustomerV2Controller {
 
     // built-in support for HEAD and OPTIONS for GET methods
     @GetMapping(value = "/customers", produces = API_V2)
-    public ResponseEntity<List<CustomerV2Dto>> getCustomersV2() {
+    public ResponseEntity<List<CustomerV2Dto>> getAllCustomers() {
         final List<Customer> customers = customerService.findAll();
-        return ResponseEntity.ok(CustomerMapper.INSTANCE.mapToCustomersV2(customers));
+        return ResponseEntity.ok(CustomerMapper.INSTANCE.mapToCustomersV2Dto(customers));
     }
 
 
     @GetMapping(value = "/customers/{id}", produces = API_V2)
-    public ResponseEntity<CustomerV2Dto> getCustomerV2(@PathVariable int id) {
+    public ResponseEntity<CustomerV2Dto> getCustomerById(@PathVariable int id) {
         return customerService.findById(id)
                 .map(customer -> ResponseEntity.ok(CustomerMapper.INSTANCE.mapToCustomerV2Dto(customer)))
                 .orElse(ResponseEntity.notFound().build());
