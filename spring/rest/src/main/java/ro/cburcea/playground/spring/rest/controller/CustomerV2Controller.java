@@ -100,11 +100,6 @@ public class CustomerV2Controller {
      * "value":"Fooo Baaar"
      * },
      * {
-     * "op":"replace",
-     * "path":"/orders/0/price",
-     * "value":"444"
-     * },
-     * {
      * "op":"copy",
      * "from":"/orders/1",
      * "path":"/orders/-"

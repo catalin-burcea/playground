@@ -1,16 +1,13 @@
 package ro.cburcea.playground.spring.rest.service;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ro.cburcea.playground.spring.rest.domain.Director;
 import ro.cburcea.playground.spring.rest.domain.Movie;
 import ro.cburcea.playground.spring.rest.repository.DirectorRepository;
-import ro.cburcea.playground.spring.rest.repository.MovieRepository;
 
-import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -18,26 +15,10 @@ import java.util.Optional;
 @Service
 public class DirectorService {
 
-    @Autowired
-    private DirectorRepository directorRepository;
-    @Autowired
-    private MovieRepository movieRepository;
+    private final DirectorRepository directorRepository;
 
-    @PostConstruct
-    public void init() {
-
-        for (int i = 1; i < 100; i++) {
-            Director director = new Director("firstName" + i, "lastName" + i, 1950 + i);
-            directorRepository.save(director);
-            final Movie movie1 = new Movie("Title" + i, 1980 + i, i);
-            final Movie movie2 = new Movie("Title" + i + 1, 1980 + i, i);
-            movieRepository.save(movie1);
-            movieRepository.save(movie2);
-            director.addMovie(movie1);
-            director.addMovie(movie2);
-            directorRepository.save(director);
-        }
-
+    public DirectorService(DirectorRepository directorRepository) {
+        this.directorRepository = directorRepository;
     }
 
     public List<Director> findAll() {

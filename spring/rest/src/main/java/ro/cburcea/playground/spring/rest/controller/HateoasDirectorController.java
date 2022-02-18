@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
@@ -46,15 +47,16 @@ public class HateoasDirectorController {
     @GetMapping(produces = APPLICATION_HAL_JSON)
     public ResponseEntity<PagedModel<DirectorDto>> getAllDirectors(@RequestParam(required = false) String firstName,
                                                                    @RequestParam(defaultValue = "0") int page,
-                                                                   @RequestParam(defaultValue = "3") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+                                                                   @RequestParam(defaultValue = "3") int size,
+                                                                   @RequestParam(defaultValue = "id") String sort) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, sort));
         Page<Director> directors;
         if (StringUtils.isEmpty(firstName)) {
             directors = directorService.findAll(pageable);
         } else {
             directors = directorService.findAllByFirstName(firstName, pageable);
         }
-        Link allDirectorsLink = linkTo(methodOn(HateoasDirectorController.class).getAllDirectors(null, page, size)).withSelfRel();
+        Link allDirectorsLink = linkTo(methodOn(HateoasDirectorController.class).getAllDirectors(null, page, size, sort)).withSelfRel();
         PagedModel<DirectorDto> directorModel = pagedResourcesAssembler.toModel(directors, directorAssembler, allDirectorsLink);
         return ResponseEntity.ok(directorModel);
     }
@@ -75,7 +77,7 @@ public class HateoasDirectorController {
         final List<Movie> movies = directorService.findAllMoviesByDirectorId(id);
 
         Link directorMoviesLink = linkTo(methodOn(HateoasDirectorController.class).getDirectorMovies(id)).withSelfRel();
-        Link directorsLink = linkTo(methodOn(HateoasDirectorController.class).getAllDirectors(null, 0, 3)).withRel("directors");
+        Link directorsLink = linkTo(methodOn(HateoasDirectorController.class).getAllDirectors(null, 0, 3, null)).withRel("directors");
 
         CollectionModel<MovieDto> movieDtos = movieAssembler.toCollectionModel(movies);
         return ResponseEntity.ok(new CollectionModel<>(movieDtos, Arrays.asList(directorMoviesLink, directorsLink)));

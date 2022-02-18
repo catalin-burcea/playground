@@ -10,7 +10,7 @@ import org.springframework.web.filter.ShallowEtagHeaderFilter;
 import javax.servlet.Filter;
 
 
-@SpringBootApplication
+@SpringBootApplication()
 public class RestSpringBootApp {
 
     public static void main(String[] args) {
