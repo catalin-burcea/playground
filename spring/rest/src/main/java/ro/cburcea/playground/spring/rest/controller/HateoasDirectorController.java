@@ -1,19 +1,22 @@
 package ro.cburcea.playground.spring.rest.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+import ro.cburcea.playground.spring.rest.assembler.DirectorAssembler;
+import ro.cburcea.playground.spring.rest.assembler.MovieAssembler;
 import ro.cburcea.playground.spring.rest.domain.Director;
 import ro.cburcea.playground.spring.rest.domain.Movie;
 import ro.cburcea.playground.spring.rest.dtos.DirectorDto;
 import ro.cburcea.playground.spring.rest.dtos.MovieDto;
-import ro.cburcea.playground.spring.rest.mapper.DirectorMapper;
-import ro.cburcea.playground.spring.rest.mapper.MovieMapper;
 import ro.cburcea.playground.spring.rest.service.DirectorService;
 
 import java.util.Arrays;
@@ -27,48 +30,55 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class HateoasDirectorController {
 
     private static final String APPLICATION_HAL_JSON = "application/hal+json";
+
     @Autowired
     private DirectorService directorService;
 
+    @Autowired
+    private PagedResourcesAssembler<Director> pagedResourcesAssembler;
+
+    @Autowired
+    private DirectorAssembler directorAssembler;
+
+    @Autowired
+    private MovieAssembler movieAssembler;
+
     @GetMapping(produces = APPLICATION_HAL_JSON)
-    public ResponseEntity<CollectionModel<DirectorDto>> getAllDirectors() {
-        final List<Director> directors = directorService.findAll();
-        List<DirectorDto> directorDtos = DirectorMapper.INSTANCE.mapToDirectorsDto(directors);
-
-        directorDtos.forEach(director -> {
-            director.add(linkTo(methodOn(HateoasDirectorController.class).getDirectorById(director.getId())).withSelfRel());
-            director.add(linkTo(methodOn(HateoasDirectorController.class).getDirectorMovies(director.getId())).withRel("directorMovies"));
-        });
-        Link allDirectorsLink = linkTo(methodOn(HateoasDirectorController.class).getAllDirectors()).withSelfRel();
-
-        return ResponseEntity.ok(new CollectionModel<>(directorDtos, allDirectorsLink));
+    public ResponseEntity<PagedModel<DirectorDto>> getAllDirectors(@RequestParam(required = false) String firstName,
+                                                                   @RequestParam(defaultValue = "0") int page,
+                                                                   @RequestParam(defaultValue = "3") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Director> directors;
+        if (StringUtils.isEmpty(firstName)) {
+            directors = directorService.findAll(pageable);
+        } else {
+            directors = directorService.findAllByFirstName(firstName, pageable);
+        }
+        Link allDirectorsLink = linkTo(methodOn(HateoasDirectorController.class).getAllDirectors(null, page, size)).withSelfRel();
+        PagedModel<DirectorDto> directorModel = pagedResourcesAssembler.toModel(directors, directorAssembler, allDirectorsLink);
+        return ResponseEntity.ok(directorModel);
     }
 
 
     @GetMapping(value = "/{id}", produces = APPLICATION_HAL_JSON)
     public ResponseEntity<DirectorDto> getDirectorById(@PathVariable Long id) {
         return directorService.findById(id)
-                .map(DirectorMapper.INSTANCE::mapToDirectorDto)
-                .map(director -> {
-                    director.add(linkTo(methodOn(HateoasDirectorController.class).getDirectorById(id)).withSelfRel());
-                    director.add(linkTo(methodOn(HateoasDirectorController.class).getDirectorMovies(id)).withRel("directorMovies"));
-                    director.add(linkTo(methodOn((HateoasDirectorController.class)).getAllDirectors()).withRel("directors"));
-                    return ResponseEntity.ok(director);
-                })
+                .map(directorAssembler::toModel)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
 
     }
 
+
     @GetMapping(value = "/{id}/movies", produces = APPLICATION_HAL_JSON)
     public ResponseEntity<CollectionModel<MovieDto>> getDirectorMovies(@PathVariable Long id) {
         final List<Movie> movies = directorService.findAllMoviesByDirectorId(id);
-        List<MovieDto> movieDtos = MovieMapper.INSTANCE.mapToMoviesDto(movies);
 
         Link directorMoviesLink = linkTo(methodOn(HateoasDirectorController.class).getDirectorMovies(id)).withSelfRel();
-        Link directorLink = linkTo(methodOn(HateoasDirectorController.class).getDirectorById(id)).withRel("director");
-        Link directorsLink = linkTo(methodOn(HateoasDirectorController.class).getAllDirectors()).withRel("directors");
+        Link directorsLink = linkTo(methodOn(HateoasDirectorController.class).getAllDirectors(null, 0, 3)).withRel("directors");
 
-        return ResponseEntity.ok(new CollectionModel<>(movieDtos, Arrays.asList(directorMoviesLink, directorLink, directorsLink)));
+        CollectionModel<MovieDto> movieDtos = movieAssembler.toCollectionModel(movies);
+        return ResponseEntity.ok(new CollectionModel<>(movieDtos, Arrays.asList(directorMoviesLink, directorsLink)));
     }
 
 }

@@ -13,8 +13,8 @@ public class Director {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String firstname;
-    private String lastname;
+    private String firstName;
+    private String lastName;
     private int year;
 
     @OneToMany(
@@ -28,9 +28,9 @@ public class Director {
     public Director() {
     }
 
-    public Director(String firstname, String lastname, int year) {
-        this.firstname = firstname;
-        this.lastname = lastname;
+    public Director(String firstName, String lastName, int year) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.year = year;
     }
 
@@ -42,20 +42,20 @@ public class Director {
         this.id = id;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getLastname() {
-        return lastname;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public int getYear() {

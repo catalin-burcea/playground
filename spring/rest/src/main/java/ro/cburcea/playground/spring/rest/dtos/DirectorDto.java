@@ -4,23 +4,21 @@ package ro.cburcea.playground.spring.rest.dtos;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 
-import java.util.Set;
-
 @Relation(itemRelation = "director", collectionRelation = "directors")
 public class DirectorDto extends RepresentationModel<DirectorDto> {
     
     private Long id;
-    private String firstname;
-    private String lastname;
+    private String firstName;
+    private String lastName;
     private int year;
 
     public DirectorDto() {
     }
 
-    public DirectorDto(Long id, String firstname, String lastname, int year, Set<MovieDto> movies) {
+    public DirectorDto(Long id, String firstName, String lastName, int year) {
         this.id = id;
-        this.firstname = firstname;
-        this.lastname = lastname;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.year = year;
     }
 
@@ -32,20 +30,20 @@ public class DirectorDto extends RepresentationModel<DirectorDto> {
         this.id = id;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public String getLastname() {
-        return lastname;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public int getYear() {

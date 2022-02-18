@@ -10,9 +10,6 @@ import org.springframework.web.filter.ShallowEtagHeaderFilter;
 import javax.servlet.Filter;
 
 
-/*
- * https://docs.microsoft.com/en-us/azure/architecture/best-practices/api-design
- */
 @SpringBootApplication
 public class RestSpringBootApp {
 

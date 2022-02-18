@@ -26,7 +26,6 @@ public class CustomerV2Controller {
     private static final String API_V2 = "application/vnd.rest.v2+json";
     private static final String APPLICATION_JSON_PATCH_V2_JSON = "application/json-patch.v2+json";
 
-
     @Autowired
     private CustomerService customerService;
 
