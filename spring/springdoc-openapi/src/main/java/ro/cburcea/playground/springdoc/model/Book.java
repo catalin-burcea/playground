@@ -7,6 +7,15 @@ public class Book {
 
     private long id;
 
+    public Book() {
+    }
+
+    public Book(long id, @NotBlank @Size(min = 0, max = 20) String title, @NotBlank @Size(min = 0, max = 30) String author) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+    }
+
     @NotBlank
     @Size(min = 0, max = 20)
     private String title;
