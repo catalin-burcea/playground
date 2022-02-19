@@ -18,7 +18,7 @@ public class DirectorAssembler implements RepresentationModelAssembler<Director,
         DirectorDto directorDto = DirectorMapper.INSTANCE.mapToDirectorDto(director);
         directorDto.add(linkTo(methodOn(HateoasDirectorController.class).getDirectorById(director.getId())).withSelfRel());
         directorDto.add(linkTo(methodOn(HateoasDirectorController.class).getDirectorMovies(director.getId())).withRel("directorMovies"));
-        directorDto.add(linkTo(methodOn((HateoasDirectorController.class)).getAllDirectors(null, 0, 3, null)).withRel("directors"));
+        directorDto.add(linkTo(methodOn((HateoasDirectorController.class)).getAllDirectors(null, null)).withRel("directors"));
         return directorDto;
     }
 

@@ -2,13 +2,15 @@ package ro.cburcea.playground.spring.rest.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ro.cburcea.playground.spring.rest.assembler.MovieAssembler;
 import ro.cburcea.playground.spring.rest.domain.Movie;
 import ro.cburcea.playground.spring.rest.dtos.MovieDto;
@@ -33,14 +35,10 @@ public class HateoasMovieController {
     private PagedResourcesAssembler<Movie> pagedResourcesAssembler;
 
     @GetMapping(produces = APPLICATION_HAL_JSON)
-    public ResponseEntity<PagedModel<MovieDto>> getAllMovies(@RequestParam(defaultValue = "0") int page,
-                                                             @RequestParam(defaultValue = "3") int size) {
+    public ResponseEntity<PagedModel<MovieDto>> getAllMovies(Pageable pageable) {
+        Page<Movie> movies = movieService.findAll(pageable);
 
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Movie> movies;
-        movies = movieService.findAll(pageable);
-
-        Link allMoviesLink = linkTo(methodOn(HateoasMovieController.class).getAllMovies(page, size)).withSelfRel();
+        Link allMoviesLink = linkTo(methodOn(HateoasMovieController.class).getAllMovies(pageable)).withSelfRel();
         PagedModel<MovieDto> movieModel = pagedResourcesAssembler.toModel(movies, movieAssembler, allMoviesLink);
         return ResponseEntity.ok(movieModel);
     }
