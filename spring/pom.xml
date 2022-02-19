@@ -12,6 +12,10 @@
     <artifactId>spring</artifactId>
     <packaging>pom</packaging>
 
+    <properties>
+        <springdoc.version>1.2.32</springdoc.version>
+    </properties>
+
     <modules>
         <module>profiles</module>
         <module>beans</module>

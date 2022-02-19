@@ -12,10 +12,6 @@
     <groupId>ro.cburcea.playground.spring</groupId>
     <artifactId>springdoc-openapi</artifactId>
 
-    <properties>
-        <springdoc.version>1.2.32</springdoc.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
