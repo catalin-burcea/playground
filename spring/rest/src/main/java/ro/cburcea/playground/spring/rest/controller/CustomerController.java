@@ -204,16 +204,15 @@ public class CustomerController {
         return ResponseEntity.noContent().build();
     }
 
-
-    // do we need to version PATCH?!
     @Operation(summary = "Partially update a customer using JSON PATCH", description = PATCH_DESC)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "Customer not found"),
             @ApiResponse(responseCode = "204", description = "Customer successfully updated"),
-            @ApiResponse(responseCode = "500", description = "A JSON PATCH exception occurred")}
+            @ApiResponse(responseCode = "400", description = "Bad request - Invalid JSON input"),
+            @ApiResponse(responseCode = "404", description = "Customer not found"),
+            @ApiResponse(responseCode = "500", description = "An unexpected exception occurred")}
     )
     @PatchMapping(value = "/{id}", consumes = {APPLICATION_JSON_PATCH_V1_JSON})
-    public ResponseEntity<Void> patchCustomerMethod2(@RequestBody JsonPatch patch, @PathVariable Long id) {
+    public ResponseEntity<String> patchCustomerMethod2(@RequestBody JsonPatch patch, @PathVariable Long id) {
         Optional<Customer> customer = customerService.findById(id);
 
         if (customer.isEmpty()) {
@@ -226,10 +225,12 @@ public class CustomerController {
             customerService.update(patchedCustomer);
         } catch (JsonPatchException | JsonProcessingException e) {
             System.out.println(e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
         return ResponseEntity.noContent().build();
     }
+
+    // do we need to version PATCH?!
 
 
     /**
