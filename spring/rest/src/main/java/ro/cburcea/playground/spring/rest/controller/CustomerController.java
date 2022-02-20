@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
@@ -33,6 +35,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RequestMapping("/customers")
 public class CustomerController {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CustomerController.class);
     private static final String API_V1 = "application/vnd.rest.v1+json";
     private static final String APPLICATION_JSON_PATCH_V1_JSON = "application/json-patch.v1+json";
     private static final String PATCH_DESC = "    \n" +
@@ -80,14 +83,15 @@ public class CustomerController {
     private CustomerService customerService;
 
 
-    @Operation(summary = "Get a list of customers")
+    @Operation(summary = "Get a list of customers. Implements HTTP caching + eTag mechanism")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "A list of customers or an empty list if there is no customer",
                     content = {@Content(mediaType = API_V1, schema = @Schema(implementation = CustomerDto.class))})}
     )
     // built-in support for HEAD and OPTIONS for GET methods
     @GetMapping(produces = API_V1)
-    public ResponseEntity<List<CustomerDto>> getAllCustomers() {
+    public ResponseEntity<List<CustomerDto>> getAllCustomers(@RequestHeader(value = "If-None-Match", required = false) String etag) {
+        LOG.info("If-None-Match = {}", etag);
         final CacheControl cacheControl = CacheControl.maxAge(30, TimeUnit.SECONDS);
         final List<Customer> customers = customerService.findAll();
         return ResponseEntity
@@ -224,7 +228,7 @@ public class CustomerController {
             Customer patchedCustomer = CustomerMapper.INSTANCE.updateCustomerFromDto(customerDtoPatched, customer.get());
             customerService.update(patchedCustomer);
         } catch (JsonPatchException | JsonProcessingException e) {
-            System.out.println(e);
+            LOG.info(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
         return ResponseEntity.noContent().build();

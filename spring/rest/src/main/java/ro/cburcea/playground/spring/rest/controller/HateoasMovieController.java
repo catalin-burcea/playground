@@ -6,11 +6,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.*;
+import ro.cburcea.playground.spring.rest.Utils;
 import ro.cburcea.playground.spring.rest.assembler.MovieAssembler;
 import ro.cburcea.playground.spring.rest.domain.Movie;
 import ro.cburcea.playground.spring.rest.dtos.MovieDto;
@@ -44,10 +44,13 @@ public class HateoasMovieController {
     }
 
     @GetMapping(value = "/{id}", produces = APPLICATION_HAL_JSON)
-    public ResponseEntity<MovieDto> getMovieById(@PathVariable Long id) {
+    public ResponseEntity<MovieDto> getMovieById(@PathVariable Long id, @RequestHeader MultiValueMap<String, String> headers) {
+        Utils.logHeaders(headers);
+        HttpHeaders httpResponseHeaders = Utils.buildCustomHeaders();
+
         return movieService.findById(id)
                 .map(movieAssembler::toModel)
-                .map(ResponseEntity::ok)
+                .map(movieDto -> ResponseEntity.ok().headers(httpResponseHeaders).body(movieDto))
                 .orElse(ResponseEntity.notFound().build());
 
     }

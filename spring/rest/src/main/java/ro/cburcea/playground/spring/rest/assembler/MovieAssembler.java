@@ -17,7 +17,7 @@ public class MovieAssembler implements RepresentationModelAssembler<Movie, Movie
     @Override
     public MovieDto toModel(Movie movie) {
         MovieDto movieDto = MovieMapper.INSTANCE.mapToMovieDto(movie);
-        movieDto.add(linkTo(methodOn(HateoasMovieController.class).getMovieById(movie.getId())).withSelfRel());
+        movieDto.add(linkTo(methodOn(HateoasMovieController.class).getMovieById(movie.getId(), null)).withSelfRel());
         movieDto.add(linkTo(methodOn(HateoasDirectorController.class).getDirectorById(movie.getDirector().getId())).withRel("director"));
         movieDto.add(linkTo(methodOn(HateoasMovieController.class).getAllMovies(null)).withRel("movies"));
         return movieDto;
