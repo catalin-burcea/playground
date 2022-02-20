@@ -26,8 +26,14 @@ public class KafkaProducer {
     public void init() {
         sendMessage(TOPIC1, "hello from spring boot app: " + TOPIC1);
         sendMessage(TOPIC1, "hello from spring boot app2: " + TOPIC1);
+        sendMessage(TOPIC1, "hello from spring boot app3: " + TOPIC1);
+        sendMessage(TOPIC1, "hello from spring boot app4: " + TOPIC1);
+        sendMessage(TOPIC1, "hello from spring boot app5: " + TOPIC1);
         sendMessage(TOPIC2, "hello from spring boot app: " + TOPIC2);
         sendMessage(TOPIC2, "hello from spring boot app2: " + TOPIC2);
+        sendMessage(TOPIC2, "hello from spring boot app3: " + TOPIC2);
+        sendMessage(TOPIC2, "hello from spring boot app4: " + TOPIC2);
+        sendMessage(TOPIC2, "hello from spring boot app5: " + TOPIC2);
         sendGreetingMessage(TOPIC1, new Greeting("Hello", "Gigel"));
         sendGreetingMessage(TOPIC1, new Greeting("Hello", "World"));
     }
