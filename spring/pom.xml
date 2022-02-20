@@ -39,6 +39,7 @@
         <module>spring-retry</module>
         <module>spring-data-redis</module>
         <module>rest</module>
+        <module>spring-kafka</module>
     </modules>
 
 </project>

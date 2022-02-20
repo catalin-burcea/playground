@@ -8,3 +8,4 @@
 * https://www.bezkoder.com/spring-boot-pagination-filter-jpa-pageable/
 * https://www.vincenzoracca.com/en/blog/framework/spring/spring-hateoas/
 * https://www.baeldung.com/spring-rest-openapi-documentation
+* https://web.dev/http-cache/
