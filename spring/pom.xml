@@ -40,6 +40,7 @@
         <module>spring-data-redis</module>
         <module>rest</module>
         <module>spring-kafka</module>
+        <module>spring-data</module>
     </modules>
 
 </project>
