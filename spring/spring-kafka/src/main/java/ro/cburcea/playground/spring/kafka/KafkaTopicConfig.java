@@ -29,11 +29,11 @@ public class KafkaTopicConfig {
 
     @Bean
     public NewTopic topic1() {
-        return new NewTopic(TOPIC1, 1, (short) 1);
+        return new NewTopic(TOPIC1, 2, (short) 1);
     }
 
     @Bean
     public NewTopic topic2() {
-        return TopicBuilder.name(TOPIC2).partitions(1).replicas(1).build();
+        return TopicBuilder.name(TOPIC2).partitions(3).replicas(1).build();
     }
 }

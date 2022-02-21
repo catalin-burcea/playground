@@ -3,6 +3,7 @@ package ro.cburcea.playground.spring.kafka;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Headers;
@@ -24,19 +25,31 @@ public class KafkaConsumer {
         LOGGER.info("listenGroupBar -> Received Message: {} ", message);
     }
 
+    // consumers from "bar" groupId competes for messages from TOPIC2 (competing consumers pattern)
     @KafkaListener(topics = TOPIC2, groupId = "bar")
     public void listenGroupBar2(String message) {
         LOGGER.info("listenGroupBar2 -> Received Message: {} ", message);
     }
 
-    @KafkaListener(topics = {TOPIC1, TOPIC2}, groupId = "foo")
+    @KafkaListener(topics = TOPIC2, groupId = "bar")
+    public void listenGroupBar3(String message) {
+        LOGGER.info("listenGroupBar3 -> Received Message: {} ", message);
+    }
+
+    @KafkaListener(topics = {TOPIC1, TOPIC2}, groupId = "foo", topicPartitions = {
+            @TopicPartition(topic = TOPIC1, partitions = {"0"}),
+            @TopicPartition(topic = TOPIC2, partitions = {"0", "1"})
+    })
     public void listenFromMultipleTopics(String message,
                                          @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                                          @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition) {
         LOGGER.info("listenFromMultipleTopics -> Topic {}, Partition {}, Received Message: {}", topic, partition, message);
     }
 
-    @KafkaListener(topics = {TOPIC1, TOPIC2}, groupId = "foo")
+    @KafkaListener(topics = {TOPIC1, TOPIC2}, groupId = "foo", topicPartitions = {
+            @TopicPartition(topic = TOPIC1, partitions = {"1"}),
+            @TopicPartition(topic = TOPIC2, partitions = {"2"})
+    })
     public void listenFromMultipleTopics2(String message,
                                           @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                                           @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition) {
@@ -48,6 +61,11 @@ public class KafkaConsumer {
                                   @Headers Map<String, String> headers) {
         LOGGER.info("Received Message: {}", message);
         printHeaders(headers);
+    }
+
+    @KafkaListener(topics = TOPIC1, containerFactory = "filterKafkaListenerContainerFactory")
+    public void listenWithFilter(String message) {
+        LOGGER.info("listenWithFilter -> Received Message in filtered listener: {}", message);
     }
 
     private void printHeaders(Map<String, String> headers) {
