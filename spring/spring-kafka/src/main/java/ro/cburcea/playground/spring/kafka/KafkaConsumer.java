@@ -21,19 +21,20 @@ public class KafkaConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConsumer.class);
 
     @KafkaListener(topics = TOPIC1, groupId = "bar")
-    public void listenGroupBar(String message) {
-        LOGGER.info("listenGroupBar -> Received Message: {} ", message);
+    public void listenGroupBar(String message, @Header(KafkaHeaders.RECEIVED_PARTITION_ID) int partition) {
+        LOGGER.info("listenGroupBar -> partition {}, Received Message: {} ", partition, message);
+
     }
 
     // consumers from "bar" groupId competes for messages from TOPIC2 (competing consumers pattern)
     @KafkaListener(topics = TOPIC2, groupId = "bar")
-    public void listenGroupBar2(String message) {
-        LOGGER.info("listenGroupBar2 -> Received Message: {} ", message);
+    public void competingConsumer1(String message) {
+        LOGGER.info("competingConsumer1 -> Received Message: {} ", message);
     }
 
     @KafkaListener(topics = TOPIC2, groupId = "bar")
-    public void listenGroupBar3(String message) {
-        LOGGER.info("listenGroupBar3 -> Received Message: {} ", message);
+    public void competingConsumer2(String message) {
+        LOGGER.info("competingConsumer2 -> Received Message: {} ", message);
     }
 
     @KafkaListener(topics = {TOPIC1, TOPIC2}, groupId = "foo", topicPartitions = {
