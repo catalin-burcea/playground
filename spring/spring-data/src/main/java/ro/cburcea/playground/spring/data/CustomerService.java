@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ro.cburcea.playground.spring.data.customrepo.AnotherCustomerRepository;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class CustomerService {
@@ -19,26 +21,31 @@ public class CustomerService {
     @Autowired
     private CustomerRepository customerRepository;
 
+    @Autowired
+    private AnotherCustomerRepository anotherCustomerRepository;
+
     @PostConstruct
     void init() {
-        customerRepository.save(new Customer("John", "Doe", 22));
-        customerRepository.save(new Customer("John", "Smith", 23));
-        customerRepository.save(new Customer("John", "Williams", 24));
-        customerRepository.save(new Customer("John", "Cena", 25));
-        customerRepository.save(new Customer("John", "Isner", 26));
-        customerRepository.save(new Customer("John", "Walker", 27));
+        customerRepository.save(new Customer("John", "Doe", "a@a.com", 22));
+        customerRepository.save(new Customer("John", "Smith", "b@b.com", 23));
+        customerRepository.save(new Customer("John", "Cena", "c@c.com", 25));
+        customerRepository.save(new Customer("John", "Isner", "d@d.com", 26));
+        customerRepository.save(new Customer("John", "Walker", "e@e.com", 27));
+        customerRepository.save(new Customer("John", "Williams", "f@f.com", 24));
+    }
 
-
-        customerRepository.findAll(PageRequest.of(1, 2)).forEach(customer -> LOG.info(customer.toString()));
-        customerRepository.findAllCustomersWithPaginationUsingJpql(PageRequest.of(1, 3)).forEach(customer -> LOG.info(customer.toString()));
-        customerRepository.findAllCustomersWithPaginationUsingNativeQuery(PageRequest.of(0, 2)).forEach(customer -> LOG.info(customer.toString()));
-
+    public void findCustomersUsingQueryParams() {
         Customer customer1 = customerRepository.findCustomerByFirstNameAndLastName("John", "Cena");
         LOG.info("customer1 {}", customer1.toString());
         Customer customer2 = customerRepository.findCustomerByFirstNameAndAge("John", 23);
         LOG.info("customer2 {}", customer2.toString());
         customerRepository.findUserByNameList(Arrays.asList("Smith", "Cena", "Walker")).forEach(customer -> LOG.info(customer.toString()));
+    }
 
+    public void findCustomersWithPagination() {
+        customerRepository.findAll(PageRequest.of(1, 2)).forEach(customer -> LOG.info(customer.toString()));
+        customerRepository.findAllCustomersWithPaginationUsingJpql(PageRequest.of(1, 3)).forEach(customer -> LOG.info(customer.toString()));
+        customerRepository.findAllCustomersWithPaginationUsingNativeQuery(PageRequest.of(0, 2)).forEach(customer -> LOG.info(customer.toString()));
     }
 
     @Transactional
@@ -54,5 +61,12 @@ public class CustomerService {
         customerRepository.updateCustomerFirstName("Walker", "Paul");
         final Customer customer = customerRepository.findCustomerByFirstNameAndLastName("Paul", "Walker");
         LOG.info("updateCustomer {}", customer.toString());
+    }
+
+    public void findCustomerByEmails() {
+        final List<Customer> customer = anotherCustomerRepository.findCustomerByEmails(Arrays.asList("example@test.org", "test@test.com"));
+        final List<Customer> customer2 = anotherCustomerRepository.findCustomerByEmails(Arrays.asList("example@test.org", "b@b.com"));
+        LOG.info("findCustomerByEmails {}", customer.toString());
+        LOG.info("findCustomerByEmails2 {}", customer2.toString());
     }
 }

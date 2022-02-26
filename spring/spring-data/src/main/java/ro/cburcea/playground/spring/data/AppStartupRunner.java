@@ -19,6 +19,9 @@ public class AppStartupRunner {
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReadyEventListener2() {
         LOG.info("EXECUTING : eventListener");
+        customerService.findCustomersWithPagination();
+        customerService.findCustomersUsingQueryParams();
+        customerService.findCustomerByEmails();
         customerService.updateCustomer();
         customerService.insertCustomer();
     }
