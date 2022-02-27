@@ -1,4 +1,4 @@
-package ro.cburcea.playground.spring.kafka;
+package ro.cburcea.playground.spring.kafka.basic;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;

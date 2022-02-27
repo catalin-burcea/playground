@@ -1,4 +1,4 @@
-package ro.cburcea.playground.spring.kafka;
+package ro.cburcea.playground.spring.kafka.basic;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

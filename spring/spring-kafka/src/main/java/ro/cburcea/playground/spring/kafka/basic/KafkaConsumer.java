@@ -1,4 +1,4 @@
-package ro.cburcea.playground.spring.kafka;
+package ro.cburcea.playground.spring.kafka.basic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-import static ro.cburcea.playground.spring.kafka.KafkaTopicConfig.TOPIC1;
-import static ro.cburcea.playground.spring.kafka.KafkaTopicConfig.TOPIC2;
+import static ro.cburcea.playground.spring.kafka.basic.KafkaTopicConfig.TOPIC1;
+import static ro.cburcea.playground.spring.kafka.basic.KafkaTopicConfig.TOPIC2;
 
 @Service
 public class KafkaConsumer {

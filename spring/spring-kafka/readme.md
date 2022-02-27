@@ -10,7 +10,7 @@
 * .\bin\windows\kafka-topics.bat --create --topic quickstart-events --replication-factor 1 --partitions 2 --zookeeper localhost:2181
 * .\bin\windows\kafka-topics.bat --describe --topic quickstart-events --bootstrap-server localhost:9092
 * .\bin\windows\kafka-topics.bat --list --bootstrap-server=localhost:9092 
-* .\bin\windows\kafka-topics.sh --delete --topic quickstart-events --zookeeper localhost:2181
+* .\bin\windows\kafka-topics.bat --delete --topic quickstart-events --bootstrap-server=localhost:9092 
 
 **Configs**
 * .\bin\windows\kafka-topics.bat --bootstrap-server localhost:9092 --create --topic my-topic --partitions 1 \ 
@@ -20,7 +20,7 @@
 * .\bin\windows\kafka-configs.bat --bootstrap-server localhost:9092 --entity-type topics --entity-name my-topic --describe
 * .\bin\windows\kafka-configs.bat --bootstrap-server localhost:9092  --entity-type topics --entity-name my-topic
     --alter --delete-config max.message.bytes
-* .\bin\windows\kafka-delete-records.sh --bootstrap-server localhost:9092 --offset-json-file delete-config.json
+* .\bin\windows\kafka-delete-records.bat --bootstrap-server localhost:9092 --offset-json-file delete-config.json
 
 
 #### Producers

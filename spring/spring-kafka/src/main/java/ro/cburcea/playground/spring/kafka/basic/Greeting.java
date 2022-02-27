@@ -1,4 +1,4 @@
-package ro.cburcea.playground.spring.kafka;
+package ro.cburcea.playground.spring.kafka.basic;
 
 public class Greeting {
 
