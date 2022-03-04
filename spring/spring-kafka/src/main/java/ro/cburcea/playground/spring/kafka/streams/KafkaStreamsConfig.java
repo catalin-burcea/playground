@@ -17,7 +17,7 @@ import static org.apache.kafka.streams.StreamsConfig.*;
 @Configuration
 @EnableKafka
 @EnableKafkaStreams
-public class KafkaConfig {
+public class KafkaStreamsConfig {
 
     @Value(value = "${kafka.bootstrap-address}")
     private String bootstrapAddress;

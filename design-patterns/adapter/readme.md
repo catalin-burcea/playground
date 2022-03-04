@@ -11,9 +11,10 @@ Adapter is about creating an intermediary abstraction that translates, or maps, 
 
 **Use case**
 
-Wrappers used to adopt 3rd parties libraries and frameworks - most of the applications using third party libraries use adapters as a middle layer between the application and the 3rd party library to decouple the application from the library.
+* Wrappers used to adopt 3rd parties libraries and frameworks - most of the applications using third party libraries use adapters as a middle layer between the application and the 3rd party library to decouple the application from the library.
 If another library has to be used only an adapter for the new library is required without having to change the application code.
 
+* SLF4J
 
 **Advantages**
 

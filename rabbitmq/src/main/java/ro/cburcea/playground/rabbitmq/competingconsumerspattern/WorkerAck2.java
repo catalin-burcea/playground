@@ -7,7 +7,7 @@ import com.rabbitmq.client.DeliverCallback;
 
 public class WorkerAck2 {
 
-    private final static String TASK_QUEUE_NAME = "hello";
+    private static final String TASK_QUEUE_NAME = "hello";
 
     public static void main(String[] argv) throws Exception {
         ConnectionFactory factory = new ConnectionFactory();
