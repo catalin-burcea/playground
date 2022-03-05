@@ -14,6 +14,7 @@ public class WordCountProcessor {
 
     public static final String INPUT_TOPIC = "streams-wordcount-input";
     public static final String OUTPUT_TOPIC = "streams-wordcount-output";
+    public static final String WORD_COUNTS = "wordcounts";
 
     @Autowired
     void buildPipeline(StreamsBuilder streamsBuilder) {
@@ -25,7 +26,7 @@ public class WordCountProcessor {
                 .mapValues((ValueMapper<String, String>) String::toLowerCase)
                 .flatMapValues(value -> Arrays.asList(pattern.split(value)))
                 .groupBy((key, word) -> word, Grouped.with(Serdes.String(), Serdes.String()))
-                .count();
+                .count(Materialized.as(WORD_COUNTS));
 
         wordCounts.toStream()
                 .foreach((word, count) -> System.out.println("word: " + word + " -> " + count));
