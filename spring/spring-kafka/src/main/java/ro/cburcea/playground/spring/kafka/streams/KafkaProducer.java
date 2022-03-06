@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 
 import static ro.cburcea.playground.spring.kafka.streams.WordCountProcessor.INPUT_TOPIC;
+import static ro.cburcea.playground.spring.kafka.streams.WordCountProcessor.INPUT_TOPIC2;
 
 @Service
 public class KafkaProducer {
@@ -22,6 +23,9 @@ public class KafkaProducer {
     public void init() {
         sendMessage(INPUT_TOPIC, "hello world");
         sendMessage(INPUT_TOPIC, "how are you");
+        sendMessage(INPUT_TOPIC2, "hello world");
+        sendMessage(INPUT_TOPIC2, "hello John");
+        sendMessage(INPUT_TOPIC2, "how are you");
     }
 
     public void sendMessage(String topic, String msg) {

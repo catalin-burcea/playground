@@ -27,7 +27,7 @@ public class WordCountController {
     public Long getWordCount(@PathVariable String word) {
         KafkaStreams kafkaStreams = factoryBean.getKafkaStreams();
         ReadOnlyKeyValueStore<String, Long> counts =
-                kafkaStreams.store(WordCountProcessor.WORD_COUNTS, QueryableStoreTypes.keyValueStore());
+                kafkaStreams.store(WordCountProcessor.WORD_COUNTS_STORE, QueryableStoreTypes.keyValueStore());
         return counts.get(word);
     }
 
@@ -35,7 +35,22 @@ public class WordCountController {
     public Map getWordCounts() {
         KafkaStreams kafkaStreams = factoryBean.getKafkaStreams();
         ReadOnlyKeyValueStore<String, Long> counts =
-                kafkaStreams.store(WordCountProcessor.WORD_COUNTS, QueryableStoreTypes.keyValueStore());
+                kafkaStreams.store(WordCountProcessor.WORD_COUNTS_STORE, QueryableStoreTypes.keyValueStore());
+
+        Map<String, Long> result = new HashMap<>();
+        KeyValueIterator<String, Long> range = counts.all();
+        while (range.hasNext()) {
+            KeyValue<String, Long> next = range.next();
+            result.put(next.key, next.value);
+        }
+        return result;
+    }
+
+    @GetMapping("/wordCountPerSentence")
+    public Map wordCountPerSentence() {
+        KafkaStreams kafkaStreams = factoryBean.getKafkaStreams();
+        ReadOnlyKeyValueStore<String, Long> counts =
+                kafkaStreams.store(WordCountProcessor.SENTENCE_LENGTHS_STORE, QueryableStoreTypes.keyValueStore());
 
         Map<String, Long> result = new HashMap<>();
         KeyValueIterator<String, Long> range = counts.all();
