@@ -10,6 +10,7 @@ public class DeserializationUtility {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
 
         String serializedObj = "rO0ABXNyADByby5jYnVyY2VhLnBsYXlncm91bmQuY29yZS5zZXJpYWxpemF0aW9uLlByb2R1Y3QAAAAAABLWhwIAAkwAC2Rlc2NyaXB0aW9udAASTGphdmEvbGFuZy9TdHJpbmc7TAAEbmFtZXEAfgABeHB0ABJMZW5vdm8gZGVzY3JpcHRpb250AAZMZW5vdm8=";
+        String serializedObjDefaultUID = "rO0ABXNyADdyby5jYnVyY2VhLnBsYXlncm91bmQuY29yZS5zZXJpYWxpemF0aW9uLlByb2R1Y3REZWZhdWx0XPYGdrIcpSQCAAJMAAtkZXNjcmlwdGlvbnQAEkxqYXZhL2xhbmcvU3RyaW5nO0wABG5hbWVxAH4AAXhwdAASTGVub3ZvIGRlc2NyaXB0aW9udAAGTGVub3Zv";
         System.out.println("Deserializing Product...");
 
         /* compatible changes:
@@ -24,9 +25,22 @@ public class DeserializationUtility {
         */
         Product deserializedObj = (Product) deSerializeObjectFromString(serializedObj);
 
+
+        /* incompatible changes:
+            deleting a field: InvalidClassException
+            adding a new field: InvalidClassException
+            renaming a new field: InvalidClassException
+            changing visibility modifiers: InvalidClassException
+            changing the type of a field: InvalidClassException
+        */
+        ProductDefault deserializedObjDefaultUID = (ProductDefault) deSerializeObjectFromString(serializedObjDefaultUID);
+
         System.out.println("Product.name: " + deserializedObj.getName());
         System.out.println("Product.description: " + deserializedObj.getDescription());
         System.out.println("Product.price: " + deserializedObj.getPrice());
+
+        System.out.println("ProductDefault.name: " + deserializedObjDefaultUID.getName());
+        System.out.println("ProductDefault.description: " + deserializedObjDefaultUID.getDescription());
     }
 
     public static Object deSerializeObjectFromString(String s) throws IOException, ClassNotFoundException {

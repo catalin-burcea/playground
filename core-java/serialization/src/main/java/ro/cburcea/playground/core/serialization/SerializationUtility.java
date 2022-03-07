@@ -13,10 +13,16 @@ public class SerializationUtility {
         product.setName("Lenovo");
         product.setDescription("Lenovo description");
 
+        ProductDefault productDefault = new ProductDefault();
+        productDefault.setName("Lenovo");
+        productDefault.setDescription("Lenovo description");
+
         String serializedObj = serializeObjectToString(product);
+        String serializedObj2 = serializeObjectToString(productDefault);
 
         System.out.println("Serialized Product object to string:");
         System.out.println(serializedObj);
+        System.out.println(serializedObj2);
     }
 
     public static String serializeObjectToString(Serializable o) throws IOException {
