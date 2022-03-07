@@ -17,12 +17,19 @@ public class SerializationUtility {
         productDefault.setName("Lenovo");
         productDefault.setDescription("Lenovo description");
 
+        ProductTransient productTransient = new ProductTransient();
+        productTransient.setName("Lenovo");
+        productTransient.setDescription("Lenovo description");
+        ProductTransient.commonDescription = "Lenovo common description";
+
         String serializedObj = serializeObjectToString(product);
         String serializedObj2 = serializeObjectToString(productDefault);
+        String serializedObj3 = serializeObjectToString(productTransient);
 
-        System.out.println("Serialized Product object to string:");
+        System.out.println("Serialized Product objects to string:");
         System.out.println(serializedObj);
         System.out.println(serializedObj2);
+        System.out.println(serializedObj3);
     }
 
     public static String serializeObjectToString(Serializable o) throws IOException {
