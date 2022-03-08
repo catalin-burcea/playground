@@ -28,8 +28,9 @@ public class DeserializationUtility {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
 
         String serializedObj = "rO0ABXNyADByby5jYnVyY2VhLnBsYXlncm91bmQuY29yZS5zZXJpYWxpemF0aW9uLlByb2R1Y3QAAAAAABLWhwIAAkwAC2Rlc2NyaXB0aW9udAASTGphdmEvbGFuZy9TdHJpbmc7TAAEbmFtZXEAfgABeHB0ABJMZW5vdm8gZGVzY3JpcHRpb250AAZMZW5vdm8=";
-        String serializedObjDefaultUID = "rO0ABXNyADdyby5jYnVyY2VhLnBsYXlncm91bmQuY29yZS5zZXJpYWxpemF0aW9uLlByb2R1Y3REZWZhdWx0XPYGdrIcpSQCAAJMAAtkZXNjcmlwdGlvbnQAEkxqYXZhL2xhbmcvU3RyaW5nO0wABG5hbWVxAH4AAXhwdAASTGVub3ZvIGRlc2NyaXB0aW9udAAGTGVub3Zv";
+        String serializedObjDefaultUID = "rO0ABXNyADpyby5jYnVyY2VhLnBsYXlncm91bmQuY29yZS5zZXJpYWxpemF0aW9uLlByb2R1Y3REZWZhdWx0VUlEKyKS7mn6p/wCAAJMAAtkZXNjcmlwdGlvbnQAEkxqYXZhL2xhbmcvU3RyaW5nO0wABG5hbWVxAH4AAXhwdAASTGVub3ZvIGRlc2NyaXB0aW9udAAGTGVub3Zv";
         String serializedObjTransient = "rO0ABXNyADlyby5jYnVyY2VhLnBsYXlncm91bmQuY29yZS5zZXJpYWxpemF0aW9uLlByb2R1Y3RUcmFuc2llbnQAAAAAABLWhwIAAUwABG5hbWV0ABJMamF2YS9sYW5nL1N0cmluZzt4cHQABkxlbm92bw==";
+        String serializedObjInheritance = "rO0ABXNyADVyby5jYnVyY2VhLnBsYXlncm91bmQuY29yZS5zZXJpYWxpemF0aW9uLkNoaWxkUHJvZHVjdOKB567EnEAyAgABTAAFcHJpY2V0ABNMamF2YS9sYW5nL0ludGVnZXI7eHBzcgARamF2YS5sYW5nLkludGVnZXIS4qCk94GHOAIAAUkABXZhbHVleHIAEGphdmEubGFuZy5OdW1iZXKGrJUdC5TgiwIAAHhwAAANag==";
         System.out.println("Deserializing Product...");
 
         /* compatible changes:
@@ -52,13 +53,20 @@ public class DeserializationUtility {
             changing visibility modifiers: InvalidClassException
             changing the type of a field: InvalidClassException
         */
-        ProductDefault deserializedObjDefaultUID = (ProductDefault) deSerializeObjectFromString(serializedObjDefaultUID);
+        ProductDefaultUID deserializedObjDefaultUID = (ProductDefaultUID) deSerializeObjectFromString(serializedObjDefaultUID);
 
         /*
             transient and static fields are not serialized
          */
         ProductTransient.commonDescription = "updated common desc";
         ProductTransient deserializedObjTransient = (ProductTransient) deSerializeObjectFromString(serializedObjTransient);
+
+        /*
+            Super class variables: If super class also implemented Serializable interface then those variables will be serialized,
+             otherwise it won't serialize the super class variables. and while deserializing,
+              JVM will run default constructor in super class and populates the default values. Same thing will happen for all superclasses.
+         */
+        ChildProduct deserializedObjInheritance = (ChildProduct) deSerializeObjectFromString(serializedObjInheritance);
 
         System.out.println("Product.name: " + deserializedObj.getName());
         System.out.println("Product.description: " + deserializedObj.getDescription());
@@ -72,6 +80,11 @@ public class DeserializationUtility {
         System.out.println("ProductTransient.name: " + deserializedObjTransient.getName());
         System.out.println("ProductTransient.description: " + deserializedObjTransient.getDescription());
         System.out.println("ProductTransient.commonDescription: " + ProductTransient.commonDescription);
+        System.out.println();
+
+        System.out.println("ChildProduct.name: " + deserializedObjInheritance.getName());
+        System.out.println("ChildProduct.description: " + deserializedObjInheritance.getDescription());
+        System.out.println("ChildProduct.price: " + deserializedObjInheritance.getPrice());
         System.out.println();
     }
 

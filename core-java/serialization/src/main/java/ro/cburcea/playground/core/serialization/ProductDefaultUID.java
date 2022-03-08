@@ -2,7 +2,7 @@ package ro.cburcea.playground.core.serialization;
 
 import java.io.Serializable;
 
-public class ProductDefault implements Serializable {
+public class ProductDefaultUID implements Serializable {
 
     private String name;
     private String description;

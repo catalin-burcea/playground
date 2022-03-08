@@ -13,7 +13,7 @@ public class SerializationUtility {
         product.setName("Lenovo");
         product.setDescription("Lenovo description");
 
-        ProductDefault productDefault = new ProductDefault();
+        ProductDefaultUID productDefault = new ProductDefaultUID();
         productDefault.setName("Lenovo");
         productDefault.setDescription("Lenovo description");
 
@@ -22,14 +22,19 @@ public class SerializationUtility {
         productTransient.setDescription("Lenovo description");
         ProductTransient.commonDescription = "Lenovo common description";
 
+
+        ChildProduct childProduct = new ChildProduct("product", "desc", 3434);
+
         String serializedObj = serializeObjectToString(product);
         String serializedObj2 = serializeObjectToString(productDefault);
         String serializedObj3 = serializeObjectToString(productTransient);
+        String serializedObj4 = serializeObjectToString(childProduct);
 
         System.out.println("Serialized Product objects to string:");
         System.out.println(serializedObj);
         System.out.println(serializedObj2);
         System.out.println(serializedObj3);
+        System.out.println(serializedObj4);
     }
 
     public static String serializeObjectToString(Serializable o) throws IOException {
