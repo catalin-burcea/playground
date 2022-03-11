@@ -1,0 +1,38 @@
+[
+  {
+    "isin": "XYZ0001",
+    "quantity": 5,
+    "price": 11.39,
+    "customer": "Customer1"
+  },
+  {
+    "isin": "XYZ0002",
+    "quantity": 2,
+    "price": 72.99,
+    "customer": "Customer2"
+  },
+  {
+    "isin": "XYZ0003",
+    "quantity": 9,
+    "price": 99.99,
+    "customer": "Customer3"
+  },
+  {
+    "isin": "XYZ0004",
+    "quantity": 4,
+    "price": 94.99,
+    "customer": "Customer4"
+  },
+  {
+    "isin": "XYZ0005",
+    "quantity": 5,
+    "price": 59.99,
+    "customer": "Customer5"
+  },
+  {
+    "isin": "XYZ0006",
+    "quantity": 6,
+    "price": 96.99,
+    "customer": "Customer6"
+  }
+]
