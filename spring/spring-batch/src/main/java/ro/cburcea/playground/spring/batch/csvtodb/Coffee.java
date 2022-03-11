@@ -1,4 +1,4 @@
-package ro.cburcea.playground.spring.batch.example1;
+package ro.cburcea.playground.spring.batch.csvtodb;
 
 public class Coffee {
 

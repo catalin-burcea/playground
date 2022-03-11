@@ -6,3 +6,11 @@ CREATE TABLE coffee  (
     origin VARCHAR(20),
     characteristics VARCHAR(30)
 );
+
+DROP TABLE CUSTOMER IF EXISTS;
+
+CREATE TABLE CUSTOMER  (
+    id BIGINT IDENTITY NOT NULL PRIMARY KEY,
+    name VARCHAR(20),
+    credit BIGINT
+);

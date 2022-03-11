@@ -1,12 +1,12 @@
-package ro.cburcea.playground.spring.batch.example2;
+package ro.cburcea.playground.spring.batch.dbtoconsole;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringBatchCsvToXmlApp {
+public class SpringBatchDbToConsoleApp {
 
     public static void main(String[] args) {
-        SpringApplication.run(SpringBatchCsvToXmlApp.class, args);
+        SpringApplication.run(SpringBatchDbToConsoleApp.class, args);
     }
 }

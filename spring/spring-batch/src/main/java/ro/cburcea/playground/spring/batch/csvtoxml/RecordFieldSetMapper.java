@@ -1,4 +1,4 @@
-package ro.cburcea.playground.spring.batch.example2;
+package ro.cburcea.playground.spring.batch.csvtoxml;
 
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;

@@ -1,4 +1,4 @@
-package ro.cburcea.playground.spring.batch.example2;
+package ro.cburcea.playground.spring.batch.csvtoxml;
 
 import org.springframework.batch.item.ItemProcessor;
 

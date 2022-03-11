@@ -1,4 +1,4 @@
-package ro.cburcea.playground.spring.batch.example1;
+package ro.cburcea.playground.spring.batch.csvtodb;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

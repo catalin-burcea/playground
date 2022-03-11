@@ -1,4 +1,4 @@
-package ro.cburcea.playground.spring.batch.example1;
+package ro.cburcea.playground.spring.batch.csvtodb;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;

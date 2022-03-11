@@ -1,4 +1,4 @@
-package ro.cburcea.playground.spring.batch.example1;
+package ro.cburcea.playground.spring.batch.csvtodb;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
