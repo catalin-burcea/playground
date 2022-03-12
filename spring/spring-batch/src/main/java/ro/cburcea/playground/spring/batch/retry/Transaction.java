@@ -1,4 +1,4 @@
-package ro.cburcea.playground.spring.batch.csvtoxml;
+package ro.cburcea.playground.spring.batch.retry;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

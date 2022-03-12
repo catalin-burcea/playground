@@ -1,4 +1,4 @@
-package ro.cburcea.playground.spring.batch.csvtoxml;
+package ro.cburcea.playground.spring.batch.retry;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -18,6 +18,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.retry.backoff.BackOffPolicy;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
 
 @Configuration
 @EnableBatchProcessing
@@ -51,7 +53,7 @@ public class BatchConfiguration {
 
     @Bean
     public ItemProcessor<Transaction, Transaction> itemProcessor() {
-        return new CustomItemProcessor();
+        return new RetryItemProcessor();
     }
 
     @Bean
@@ -71,20 +73,32 @@ public class BatchConfiguration {
     }
 
     @Bean
+    public BackOffPolicy backOffPolicy() {
+        FixedBackOffPolicy fixedBackOffPolicy = new FixedBackOffPolicy();
+        fixedBackOffPolicy.setBackOffPeriod(2000);
+        return fixedBackOffPolicy;
+    }
+
+    @Bean
     protected Step step1(ItemReader<Transaction> reader,
                          ItemProcessor<Transaction, Transaction> processor,
                          ItemWriter<Transaction> writer) {
         return stepBuilderFactory
-                .get("step1").<Transaction, Transaction>chunk(10)
+                .get("step1").<Transaction, Transaction>chunk(5)
                 .reader(reader)
                 .processor(processor)
-                .writer(writer).build();
+                .writer(writer)
+                .faultTolerant()
+                .retryLimit(2)
+                .retry(RuntimeException.class)
+                .backOffPolicy(backOffPolicy())
+                .build();
     }
 
-    @Bean(name = "firstBatchJob")
+    @Bean(name = "retryJob")
     public Job job(@Qualifier("step1") Step step1) {
         return jobBuilderFactory
-                .get("firstBatchJob")
+                .get("retryJob")
                 .start(step1).build();
     }
 
