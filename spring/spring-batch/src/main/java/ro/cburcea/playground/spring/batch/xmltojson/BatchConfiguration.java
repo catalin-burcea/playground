@@ -8,9 +8,7 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.json.JacksonJsonObjectMarshaller;
-import org.springframework.batch.item.json.JsonFileItemWriter;
 import org.springframework.batch.item.json.builder.JsonFileItemWriterBuilder;
-import org.springframework.batch.item.xml.StaxEventItemReader;
 import org.springframework.batch.item.xml.builder.StaxEventItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,10 +32,10 @@ public class BatchConfiguration {
     private Resource inputXml;
 
     @Value("file:trades-output.json")
-    private Resource outputXml;
+    private Resource outputJson;
 
     @Bean
-    public StaxEventItemReader itemReader() {
+    public ItemReader itemReader() {
         return new StaxEventItemReaderBuilder<Trade>()
                 .name("itemReader")
                 .resource(inputXml)
@@ -48,10 +46,10 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public JsonFileItemWriter<Trade> jsonFileItemWriter() {
+    public ItemWriter<Trade> jsonFileItemWriter() {
         return new JsonFileItemWriterBuilder<Trade>()
                 .jsonObjectMarshaller(new JacksonJsonObjectMarshaller<>())
-                .resource(outputXml)
+                .resource(outputJson)
                 .name("tradeJsonFileItemWriter")
                 .build();
     }

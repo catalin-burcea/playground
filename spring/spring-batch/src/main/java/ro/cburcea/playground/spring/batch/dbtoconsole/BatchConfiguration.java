@@ -10,10 +10,8 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 
 import javax.sql.DataSource;
 
@@ -26,12 +24,6 @@ public class BatchConfiguration {
 
     @Autowired
     public StepBuilderFactory stepBuilderFactory;
-
-    @Value("classpath:transactions-input.csv")
-    private Resource inputCsv;
-
-    @Value("file:transactions-output.xml")
-    private Resource outputXml;
 
     @Bean
     public ItemReader<CustomerCredit> itemReader(DataSource dataSource) {
