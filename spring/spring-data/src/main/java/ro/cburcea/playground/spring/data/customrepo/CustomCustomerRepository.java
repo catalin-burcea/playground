@@ -4,6 +4,6 @@ import ro.cburcea.playground.spring.data.Customer;
 
 import java.util.List;
 
-public interface CustomerRepositoryCustom {
+public interface CustomCustomerRepository {
     List<Customer> findCustomerByEmails(List<String> emails);
 }

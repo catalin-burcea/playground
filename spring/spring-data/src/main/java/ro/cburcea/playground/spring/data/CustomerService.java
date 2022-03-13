@@ -8,10 +8,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ro.cburcea.playground.spring.data.customrepo.AnotherCustomerRepository;
+import ro.cburcea.playground.spring.data.customrepo2.CustomerReadOnlyRepository;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerService {
@@ -23,6 +25,9 @@ public class CustomerService {
 
     @Autowired
     private AnotherCustomerRepository anotherCustomerRepository;
+
+    @Autowired
+    private CustomerReadOnlyRepository customerReadOnlyRepository;
 
     @PostConstruct
     void init() {
@@ -68,5 +73,14 @@ public class CustomerService {
         final List<Customer> customer2 = anotherCustomerRepository.findCustomerByEmails(Arrays.asList("example@test.org", "b@b.com"));
         LOG.info("findCustomerByEmails {}", customer.toString());
         LOG.info("findCustomerByEmails2 {}", customer2.toString());
+    }
+
+    public void findCustomerUsingCustomReadOnlyRepo() {
+        final List<Customer> customers = customerReadOnlyRepository.findByLastName("Walker");
+        final Optional<Customer> customer = customerReadOnlyRepository.findById(1L);
+        LOG.info("findCustomerUsingCustomReadOnlyRepo {}", customers.toString());
+        if(customer.isPresent()) {
+            LOG.info("findCustomerUsingCustomReadOnlyRepo2 {}", customer.get().toString());
+        }
     }
 }

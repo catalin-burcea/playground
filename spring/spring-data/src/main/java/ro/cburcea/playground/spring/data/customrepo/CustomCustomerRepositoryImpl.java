@@ -8,7 +8,7 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomerRepositoryCustomImpl implements CustomerRepositoryCustom {
+public class CustomCustomerRepositoryImpl implements CustomCustomerRepository {
 
     @PersistenceContext
     private EntityManager entityManager;

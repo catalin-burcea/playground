@@ -22,6 +22,7 @@ public class AppStartupRunner {
         customerService.findCustomersWithPagination();
         customerService.findCustomersUsingQueryParams();
         customerService.findCustomerByEmails();
+        customerService.findCustomerUsingCustomReadOnlyRepo();
         customerService.updateCustomer();
         customerService.insertCustomer();
     }
