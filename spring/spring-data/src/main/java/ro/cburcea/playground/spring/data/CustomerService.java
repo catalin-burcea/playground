@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ro.cburcea.playground.spring.data.customrepo.AnotherCustomerRepository;
 import ro.cburcea.playground.spring.data.customrepo2.CustomerReadOnlyRepository;
+import ro.cburcea.playground.spring.data.dao.CustomerDao;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
@@ -28,6 +29,9 @@ public class CustomerService {
 
     @Autowired
     private CustomerReadOnlyRepository customerReadOnlyRepository;
+
+    @Autowired
+    private CustomerDao customerDao;
 
     @PostConstruct
     void init() {
@@ -83,4 +87,5 @@ public class CustomerService {
             LOG.info("findCustomerUsingCustomReadOnlyRepo2 {}", customer.get().toString());
         }
     }
+
 }
