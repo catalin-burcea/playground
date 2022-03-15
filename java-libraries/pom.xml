@@ -7,11 +7,9 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>jooq</module>
         <module>lombok</module>
         <module>mapstruct</module>
         <module>quartz</module>
-        <module>hikari</module>
     </modules>
 
     <parent>

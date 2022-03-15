@@ -23,6 +23,7 @@
         <module>java11</module>
         <module>caching</module>
         <module>core-java</module>
+        <module>db</module>
     </modules>
 
     <properties>
