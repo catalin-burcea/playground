@@ -15,6 +15,7 @@
     <modules>
         <module>jooq</module>
         <module>hikari</module>
+        <module>flyway</module>
     </modules>
 
 </project>
