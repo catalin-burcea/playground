@@ -13,7 +13,7 @@ import ro.cburcea.playground.spring.data.dao.CustomerDao;
 import javax.persistence.PersistenceException;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = Repository.class))
-public class CustomerDaoDataJpaTest {
+public class CustomerDaoDataJpaIT {
 
     @Autowired
     private CustomerDao customerDao;

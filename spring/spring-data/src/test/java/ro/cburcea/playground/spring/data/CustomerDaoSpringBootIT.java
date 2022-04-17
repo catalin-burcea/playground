@@ -9,7 +9,7 @@ import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import ro.cburcea.playground.spring.data.dao.CustomerDao;
 
 @SpringBootTest
-public class CustomerDaoSpringBootTest {
+public class CustomerDaoSpringBootIT {
 
     @Autowired
     private CustomerDao customerDao;
