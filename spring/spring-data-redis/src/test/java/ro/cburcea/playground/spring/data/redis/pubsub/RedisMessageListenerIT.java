@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataRedisTest
 @ContextConfiguration(classes = RedisConfig.class)
-public class RedisMessageListenerIntegrationTest {
+public class RedisMessageListenerIT {
 
     private static RedisServer redisServer;
 

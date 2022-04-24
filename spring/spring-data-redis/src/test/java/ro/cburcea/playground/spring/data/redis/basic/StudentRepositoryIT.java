@@ -1,4 +1,4 @@
-package ro.cburcea.playground.spring.data.redis;
+package ro.cburcea.playground.spring.data.redis.basic;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,12 +12,12 @@ import redis.embedded.RedisServerBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ContextConfiguration(classes = RedisConfig.class)
 @DataRedisTest
-public class StudentRepositoryIntegrationTest {
+public class StudentRepositoryIT {
 
     @Autowired
     private StudentRepository studentRepository;

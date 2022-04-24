@@ -1,17 +1,17 @@
 package ro.cburcea.playground.designpatterns.mediator.fan;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MediatorIntegrationTest {
 
     private Button button;
     private Fan fan;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         this.button = new Button();
         this.fan = new Fan();
