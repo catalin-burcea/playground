@@ -10,6 +10,7 @@
         <module>lombok</module>
         <module>mapstruct</module>
         <module>quartz</module>
+        <module>apache-poi</module>
     </modules>
 
     <parent>
