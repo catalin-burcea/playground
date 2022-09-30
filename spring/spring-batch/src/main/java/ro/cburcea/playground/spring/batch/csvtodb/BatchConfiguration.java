@@ -12,7 +12,6 @@ import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilde
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,18 +23,20 @@ import javax.sql.DataSource;
 @EnableBatchProcessing
 public class BatchConfiguration {
 
-    @Autowired
     public JobBuilderFactory jobBuilderFactory;
-
-    @Autowired
     public StepBuilderFactory stepBuilderFactory;
+
+    public BatchConfiguration(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
+        this.jobBuilderFactory = jobBuilderFactory;
+        this.stepBuilderFactory = stepBuilderFactory;
+    }
 
     @Value("${file.input}")
     private String fileInput;
 
     @Bean
-    public FlatFileItemReader reader() {
-        return new FlatFileItemReaderBuilder<>().name("coffeeItemReader")
+    public FlatFileItemReader<Coffee> reader() {
+        return new FlatFileItemReaderBuilder<Coffee>().name("coffeeItemReader")
                 .resource(new ClassPathResource(fileInput))
                 .delimited()
                 .names("brand", "origin", "characteristics")
@@ -46,8 +47,8 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public JdbcBatchItemWriter writer(DataSource dataSource) {
-        return new JdbcBatchItemWriterBuilder<>()
+    public JdbcBatchItemWriter<Coffee> writer(DataSource dataSource) {
+        return new JdbcBatchItemWriterBuilder<Coffee>()
                 .itemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>())
                 .sql("INSERT INTO coffee (brand, origin, characteristics) VALUES (:brand, :origin, :characteristics)")
                 .dataSource(dataSource)
@@ -56,7 +57,7 @@ public class BatchConfiguration {
 
 
     @Bean
-    public Job importUserJob(JobCompletionNotificationListener listener, Step step1) {
+    public Job importUserJob(JobListener listener, Step step1) {
         return jobBuilderFactory.get("importUserJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
@@ -65,7 +66,7 @@ public class BatchConfiguration {
     }
 
     @Bean
-    public Step step1(JdbcBatchItemWriter writer) {
+    public Step step1(JdbcBatchItemWriter<Coffee> writer) {
         return stepBuilderFactory.get("step1")
                 .<Coffee, Coffee>chunk(10)
                 .reader(reader())

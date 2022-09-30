@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class ConditionalFlowApplication implements CommandLineRunner {
-    private static Logger logger = LoggerFactory.getLogger(ConditionalFlowApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConditionalFlowApplication.class);
 
     public static void main(String[] args) {
         SpringApplication.run(ConditionalFlowApplication.class, args);

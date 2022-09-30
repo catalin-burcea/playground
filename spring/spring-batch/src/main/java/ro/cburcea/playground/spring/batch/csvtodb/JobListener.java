@@ -10,15 +10,20 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JobCompletionNotificationListener extends JobExecutionListenerSupport {
+public class JobListener extends JobExecutionListenerSupport {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JobCompletionNotificationListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobListener.class);
 
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public JobCompletionNotificationListener(JdbcTemplate jdbcTemplate) {
+    public JobListener(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @Override
+    public void beforeJob(JobExecution jobExecution) {
+        LOGGER.info("The job with id {} has started", jobExecution.getJobId());
     }
 
     @Override
@@ -29,6 +34,11 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
             String query = "SELECT brand, origin, characteristics FROM coffee";
             jdbcTemplate.query(query, (rs, row) -> new Coffee(rs.getString(1), rs.getString(2), rs.getString(3)))
                     .forEach(coffee -> LOGGER.info("Found < {} > in the database.", coffee));
+        }
+
+        if (jobExecution.getStatus() == BatchStatus.FAILED) {
+            LOGGER.error("The job with id {} has failed: ", jobExecution.getJobId());
+            //send an alert/email.
         }
     }
 }

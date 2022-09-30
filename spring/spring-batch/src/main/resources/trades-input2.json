@@ -1,0 +1,14 @@
+[
+  {
+    "isin": "XYZ0007",
+    "quantity": 33,
+    "price": 23.23,
+    "customer": "Customer7"
+  },
+  {
+    "isin": "XYZ0008",
+    "quantity": 44,
+    "price": 66.33,
+    "customer": "Customer8"
+  }
+]

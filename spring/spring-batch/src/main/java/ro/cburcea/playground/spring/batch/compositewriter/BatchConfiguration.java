@@ -13,7 +13,6 @@ import org.springframework.batch.item.json.JacksonJsonObjectMarshaller;
 import org.springframework.batch.item.json.builder.JsonFileItemWriterBuilder;
 import org.springframework.batch.item.support.ClassifierCompositeItemWriter;
 import org.springframework.batch.item.xml.StaxEventItemWriter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -28,11 +27,13 @@ import javax.sql.DataSource;
 @EnableBatchProcessing
 public class BatchConfiguration {
 
-    @Autowired
     public JobBuilderFactory jobBuilderFactory;
-
-    @Autowired
     public StepBuilderFactory stepBuilderFactory;
+
+    public BatchConfiguration(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
+        this.jobBuilderFactory = jobBuilderFactory;
+        this.stepBuilderFactory = stepBuilderFactory;
+    }
 
     @Value("file:customer-output.xml")
     private Resource outputXml;

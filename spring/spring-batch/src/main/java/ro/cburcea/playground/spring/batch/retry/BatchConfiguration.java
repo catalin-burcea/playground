@@ -10,7 +10,6 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.item.xml.StaxEventItemWriter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -25,11 +24,13 @@ import org.springframework.retry.backoff.FixedBackOffPolicy;
 @EnableBatchProcessing
 public class BatchConfiguration {
 
-    @Autowired
     public JobBuilderFactory jobBuilderFactory;
-
-    @Autowired
     public StepBuilderFactory stepBuilderFactory;
+
+    public BatchConfiguration(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
+        this.jobBuilderFactory = jobBuilderFactory;
+        this.stepBuilderFactory = stepBuilderFactory;
+    }
 
     @Value("classpath:transactions-input.csv")
     private Resource inputCsv;

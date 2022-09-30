@@ -8,7 +8,6 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.builder.JdbcCursorItemReaderBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,11 +18,13 @@ import javax.sql.DataSource;
 @EnableBatchProcessing
 public class BatchConfiguration {
 
-    @Autowired
     public JobBuilderFactory jobBuilderFactory;
-
-    @Autowired
     public StepBuilderFactory stepBuilderFactory;
+
+    public BatchConfiguration(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory) {
+        this.jobBuilderFactory = jobBuilderFactory;
+        this.stepBuilderFactory = stepBuilderFactory;
+    }
 
     @Bean
     public ItemReader<CustomerCredit> itemReader(DataSource dataSource) {
