@@ -9,9 +9,9 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
+    <groupId>ro.cburcea.playground.spring</groupId>
     <artifactId>spring-boot-admin</artifactId>
     <packaging>pom</packaging>
-    <groupId>ro.cburcea.playground.spring</groupId>
 
     <modules>
         <module>spring-boot-admin-server</module>
